@@ -145,6 +145,13 @@
             background-color: #29cf00;
         }
 
+        /* Styling untuk tombol yang dipilih (method yang sudah dipilih) */
+        .selected-payment {
+            background-color: #29cf00; /* Warna hijau saat dipilih */
+            color: white; /* Warna teks putih */
+            border: 1px solid #29cf00; /* Border yang konsisten dengan warna hijau */
+        }
+
         /* Responsif untuk perangkat mobile */
         @media screen and (max-width: 768px) {
             .container {
@@ -157,6 +164,29 @@
                 font-size: 24px;
                 padding: 12px 0;
             }
+        }
+        #productPrice {
+            font-size: 20px; /* Ukuran font lebih besar */
+            font-weight: bold; /* Membuat teks lebih tebal */
+            color: #FF6347; /* Memberi warna yang mencolok (misalnya, merah tomat) */
+            background-color: #FFF8DC; /* Memberikan latar belakang sedikit kuning untuk kontras */
+            padding: 10px; /* Memberi padding untuk jarak antara teks dan batas */
+            border-radius: 8px; /* Memberikan sudut yang melengkung */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Memberikan bayangan halus di sekitar harga */
+            margin-top: 15px; /* Menambahkan jarak antara harga dan elemen lainnya */
+            text-align: center; /* Menempatkan harga di tengah */
+        }
+
+        /* Styling untuk deskripsi produk */
+        #productDescription {
+            font-size: 16px; /* Ukuran font standar untuk deskripsi */
+            color: #555; /* Warna teks abu-abu untuk deskripsi */
+            line-height: 1.6; /* Jarak antar baris yang nyaman dibaca */
+            padding: 15px; /* Memberikan jarak dalam deskripsi */
+            background-color: #f9f9f9; /* Latar belakang yang lebih terang */
+            border-radius: 8px; /* Sudut melengkung */
+            box-sizing: border-box;
+            margin-top: 10px; /* Memberikan jarak antara deskripsi dan elemen lainnya */
         }
     </style>
 </head>
@@ -214,8 +244,8 @@
 
         <!-- Input No HP -->
         <div class="section">
-            <label for="phone">Nomor HP (WA):</label>
-            <input type="text" id="phone" placeholder="Masukkan Nomor HP (WA)">
+            <label for="phone">Nomor Tujuan:</label>
+            <input type="text" id="phone" placeholder="Nomor Tujuan">
         </div>
 
         <!-- Kontainer Tombol Beli dan WhatsApp -->
@@ -245,9 +275,10 @@
                             name: 'Unlock anggota tambahan Akrab', 
                             code: 'XAA1',
                             perintah: 'ORDERVERIF',
-                            price: 'Rp 0', 
-                            paymentMethods: ['pulsa'], 
-                            description: '<br>~ Unlock Anggota tambahan akrab<br>~ Sediakan pulsa 20.000' 
+                            price: 'Rp 2000', 
+                            paymentMethods: ['pulsa', 'dana', 'tidak'], 
+                            description: '<br>~ Unlock Anggota tambahan akrab<br>~ Sediakan pulsa 20.000',
+                            subcategoryDescription: 'setelah dor,urusan kita selesai. Cek OTP kamu di [ https://myxl.nfime.xyz ]' 
                         }
                     ]
                 }
@@ -278,6 +309,7 @@
                 Object.keys(subcategories).forEach(subcategory => {
                     const option = document.createElement('option');
                     option.value = subcategory;
+                    // Mengganti "_" dengan spasi pada subkategori
                     option.textContent = subcategory.replace(/_/g, ' ');
                     subcategorySelect.appendChild(option);
                 });
@@ -287,6 +319,7 @@
             }
         });
 
+        // Update event listener untuk subkategori dan produk
         subcategorySelect.addEventListener('change', function() {
             const category = categorySelect.value;
             const subcategory = this.value;
@@ -305,7 +338,8 @@
                     productSelect.appendChild(option);
                 });
 
-                const subcategoryInfo = subcategoryProducts[0].description;
+                // Menampilkan deskripsi subkategori
+                const subcategoryInfo = subcategoryProducts[0].subcategoryDescription;
                 subcategoryDescription.innerHTML = subcategoryInfo;
                 productSelect.disabled = false;
             } else {
@@ -313,6 +347,7 @@
             }
         });
 
+        // Update event listener untuk produk
         productSelect.addEventListener('change', function() {
             const category = categorySelect.value;
             const subcategory = subcategorySelect.value;
@@ -325,11 +360,14 @@
                 const subcategoryProducts = products[category].subcategories[subcategory];
                 const product = subcategoryProducts.find(p => p.code === productCode);
                 if (product) {
+                    // Menampilkan harga produk dengan styling khusus
                     productPrice.innerHTML = product.price;
                     productDescription.innerHTML = product.description;
                     productDescription.style.display = 'block';
                     paymentSection.style.display = 'block';
                     paymentList.innerHTML = '';
+
+                    // Menampilkan metode pembayaran
                     product.paymentMethods.forEach(method => {
                         const button = document.createElement('button');
                         button.textContent = method;
@@ -343,7 +381,11 @@
 
         function selectPaymentMethod(method, button) {
             selectedPaymentMethod = method;
+
+            // Menghapus kelas 'selected-payment' dari semua tombol
             document.querySelectorAll('.payment-button').forEach(btn => btn.classList.remove('selected-payment'));
+
+            // Menambahkan kelas 'selected-payment' ke tombol yang dipilih
             button.classList.add('selected-payment');
         }
 
@@ -363,13 +405,17 @@
             const perintah = selectedProduct ? selectedProduct.perintah : '';
 
             let message;
+
+            // Cek apakah payment method ada
             if (selectedPaymentMethod !== 'tidak') {
+                // Gabungkan parameter dengan titik satu kali, pastikan tidak ada titik ganda
                 message = `${perintah} ${productCode}.${phone}.${selectedPaymentMethod}`;
             } else {
+                // Jika payment method tidak dipilih, hanya gabungkan perintah, kode produk, dan nomor tujuan
                 message = `${perintah} ${productCode}.${phone}`;
             }
 
-            const phoneNumber = '6287717272676';
+            const phoneNumber = '6287717272676';  // Ganti dengan nomor WhatsApp yang sesuai
             const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
             window.open(whatsappURL, '_blank');
