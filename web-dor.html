@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pembelian</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #2114d6;
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 5px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 900;
+            flex-grow: 1;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2114d6;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+            color: #555;
+        }
+
+        select, input[type="text"], button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        button {
+            background-color: #2114d6;
+            color: white;
+            font-size: 14px;
+            font-weight: normal;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+            width: auto;
+            padding: 6px 15px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        button:hover {
+            background-color: #29cf00;
+        }
+
+        /* Kontainer untuk tombol "Beli Sekarang" dan WhatsApp */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px; /* Jarak antar tombol */
+        }
+
+        /* Tombol WhatsApp */
+        .whatsapp-button {
+            background-color: #25D366;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 12px 15px;
+            border-radius: 20px;
+            text-align: center;
+            border: none;
+            text-transform: uppercase;
+            flex: 1;
+        }
+
+        .whatsapp-button:hover {
+            background-color: #128C7E;
+        }
+
+        /* Tombol Beli Sekarang */
+        .buy-button {
+            background-color: #2114d6;
+            color: white;
+            font-size: 14px;
+            font-weight: normal;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            padding: 6px 15px;
+            border-radius: 20px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .buy-button:hover {
+            background-color: #29cf00;
+        }
+
+        /* Responsif untuk perangkat mobile */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin-top: 80px;
+                width: 90%;
+            }
+
+            .header {
+                font-size: 24px;
+                padding: 12px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        SRC STORE
+    </div>
+
+    <div class="container">
+        <h1>SRC STORE</h1>
+
+        <button onclick="toggleInfo()">BACA INI!</button>
+
+        <div class="info-text" id="infoText">
+            <p>Ini adalah panel web otomatis berikut cara penggunaannya :<br>1. Masukkan data ke kolom serta pilih kategori dan produknya<br>2. Periksa lagi bahwa data dan produk yang dipilih sudah benar<br>3. Klik BELI untuk membeli produk, nanti akan diarahkan ke WhatsApp<br>4. Setelah di WhatsApp, kirim pesan yang sudah disusun otomatis oleh sistem ke nomor BOT<br>5. Tunggu dan pesanan akan diproses<br><br>SEMUA PESANAN DIPROSES OLEH SISTEM 24 JAM</p>
+        </div>
+
+        <!-- Kategori Utama -->
+        <div class="section">
+            <label for="category">Pilih Kategori:</label>
+            <select id="category">
+                <option value="">-- Pilih Kategori --</option>
+                <option value="paket_otp">PAKET OTP</option>
+                <option value="paket_nonotp">PAKET NON OTP</option>
+                <option value="paket_inject">PAKET INJECT</option>
+            </select>
+        </div>
+
+        <!-- Sub-Kategori -->
+        <div class="section">
+            <label for="subcategory">Pilih Sub-Kategori:</label>
+            <select id="subcategory" disabled>
+                <option value="">-- Pilih Sub-Kategori --</option>
+                <option value="pengelola_akrab">PENGELOLA AKRAB</option>
+            </select>
+            <div id="subcategoryDescription" style="margin-top: 10px; color: #555; font-size: 17px;"></div>
+        </div>
+
+        <!-- Produk -->
+        <div class="section">
+            <label for="product">Pilih Produk:</label>
+            <select id="product" disabled>
+                <option value="">-- Pilih Produk --</option>
+            </select>
+            <div id="productDescription" class="product-description-container"></div>
+            <div id="productPrice" class="price"></div>
+        </div>
+
+        <!-- Metode Pembayaran -->
+        <div id="paymentSection" style="display: none;">
+            <h3>Pilih Metode Pembayaran:</h3>
+            <ul id="paymentList"></ul>
+        </div>
+
+        <!-- Input No HP -->
+        <div class="section">
+            <label for="phone">Nomor HP (WA):</label>
+            <input type="text" id="phone" placeholder="Masukkan Nomor HP (WA)">
+        </div>
+
+        <!-- Kontainer Tombol Beli dan WhatsApp -->
+        <div class="button-container">
+            <!-- Tombol Beli Sekarang -->
+            <button class="buy-button" onclick="submitForm()">Beli Sekarang</button>
+
+            <!-- Tombol WhatsApp -->
+            <button class="whatsapp-button" onclick="redirectToWhatsAppGroup()">Chat via WhatsApp</button>
+        </div>
+    </div>
+
+    <script>
+        let isInfoVisible = true;
+
+        function toggleInfo() {
+            const infoText = document.getElementById('infoText');
+            isInfoVisible = !isInfoVisible;
+            infoText.style.display = isInfoVisible ? 'block' : 'none';
+        }
+
+        const products = {
+            paket_otp: {
+                subcategories: {
+                    AKRAB_PENGELOLA: [
+                        { 
+                            name: 'Unlock anggota tambahan Akrab', 
+                            code: 'XAA1',
+                            perintah: 'ORDERVERIF',
+                            price: 'Rp 0', 
+                            paymentMethods: ['pulsa'], 
+                            description: '<br>~ Unlock Anggota tambahan akrab<br>~ Sediakan pulsa 20.000' 
+                        }
+                    ]
+                }
+            }
+        };
+
+        const categorySelect = document.getElementById('category');
+        const subcategorySelect = document.getElementById('subcategory');
+        const productSelect = document.getElementById('product');
+        const productPrice = document.getElementById('productPrice');
+        const productDescription = document.getElementById('productDescription');
+        const subcategoryDescription = document.getElementById('subcategoryDescription');
+        const paymentSection = document.getElementById('paymentSection');
+        const paymentList = document.getElementById('paymentList');
+        let selectedPaymentMethod = null;
+
+        categorySelect.addEventListener('change', function() {
+            const category = this.value;
+            subcategorySelect.innerHTML = '<option value="">-- Pilih Sub-Kategori --</option>';
+            productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
+            productPrice.innerHTML = '';
+            productDescription.innerHTML = '';
+            subcategoryDescription.innerHTML = '';
+            paymentSection.style.display = 'none';
+
+            if (category && products[category]) {
+                const subcategories = products[category].subcategories;
+                Object.keys(subcategories).forEach(subcategory => {
+                    const option = document.createElement('option');
+                    option.value = subcategory;
+                    option.textContent = subcategory.replace(/_/g, ' ');
+                    subcategorySelect.appendChild(option);
+                });
+                subcategorySelect.disabled = false;
+            } else {
+                subcategorySelect.disabled = true;
+            }
+        });
+
+        subcategorySelect.addEventListener('change', function() {
+            const category = categorySelect.value;
+            const subcategory = this.value;
+            productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
+            productPrice.innerHTML = '';
+            productDescription.innerHTML = '';
+            subcategoryDescription.innerHTML = '';
+            paymentSection.style.display = 'none';
+
+            if (category && subcategory && products[category]) {
+                const subcategoryProducts = products[category].subcategories[subcategory];
+                subcategoryProducts.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.code;
+                    option.textContent = product.name;
+                    productSelect.appendChild(option);
+                });
+
+                const subcategoryInfo = subcategoryProducts[0].description;
+                subcategoryDescription.innerHTML = subcategoryInfo;
+                productSelect.disabled = false;
+            } else {
+                productSelect.disabled = true;
+            }
+        });
+
+        productSelect.addEventListener('change', function() {
+            const category = categorySelect.value;
+            const subcategory = subcategorySelect.value;
+            const productCode = this.value;
+            productPrice.innerHTML = '';
+            productDescription.innerHTML = '';
+            paymentSection.style.display = 'none';
+
+            if (category && subcategory && productCode && products[category]) {
+                const subcategoryProducts = products[category].subcategories[subcategory];
+                const product = subcategoryProducts.find(p => p.code === productCode);
+                if (product) {
+                    productPrice.innerHTML = product.price;
+                    productDescription.innerHTML = product.description;
+                    productDescription.style.display = 'block';
+                    paymentSection.style.display = 'block';
+                    paymentList.innerHTML = '';
+                    product.paymentMethods.forEach(method => {
+                        const button = document.createElement('button');
+                        button.textContent = method;
+                        button.classList.add('payment-button');
+                        button.onclick = () => selectPaymentMethod(method, button);
+                        paymentList.appendChild(button);
+                    });
+                }
+            }
+        });
+
+        function selectPaymentMethod(method, button) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-button').forEach(btn => btn.classList.remove('selected-payment'));
+            button.classList.add('selected-payment');
+        }
+
+        function submitForm() {
+            const category = categorySelect.value;
+            const subcategory = subcategorySelect.value;
+            const productCode = productSelect.value;
+            const phone = document.getElementById('phone').value;
+
+            if (!subcategory || !productCode || !phone || !selectedPaymentMethod) {
+                alert('Mohon lengkapi semua informasi.');
+                return;
+            }
+
+            const selectedProduct = products[category]?.subcategories[subcategory]?.find(product => product.code === productCode);
+            const productName = selectedProduct ? selectedProduct.name : '';
+            const perintah = selectedProduct ? selectedProduct.perintah : '';
+
+            let message;
+            if (selectedPaymentMethod !== 'tidak') {
+                message = `${perintah} ${productCode}.${phone}.${selectedPaymentMethod}`;
+            } else {
+                message = `${perintah} ${productCode}.${phone}`;
+            }
+
+            const phoneNumber = '6287717272676';
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+            window.open(whatsappURL, '_blank');
+        }
+
+        function redirectToWhatsAppGroup() {
+            const groupLink = "https://chat.whatsapp.com/your-group-link"; // Ganti dengan link grup WhatsApp kamu
+            window.open(groupLink, '_blank');
+        }
+    </script>
+</body>
+</html>
