@@ -3,428 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Pembelian</title>
+    <title>Sistem Pencatatan Hutang Pelanggan</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            flex-direction: column;
-            height: 100vh;
-            overflow-x: hidden;
+            padding: 20px;
         }
-
-        .header {
-            background-color: #2114d6;
-            color: white;
-            width: 100%;
-            text-align: center;
-            padding: 15px 0;
-            font-size: 32px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
         .container {
-            background-color: #fff;
-            padding: 30px;
-            width: 100%;
             max-width: 600px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 5px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-            z-index: 900;
-            flex-grow: 1;
-            max-height: 80vh;
-            overflow-y: auto;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
         h1 {
             text-align: center;
-            color: #2114d6;
+            color: #333;
+        }
+        form {
             margin-bottom: 20px;
         }
-
-        .section {
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        label {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: block;
-            color: #555;
-        }
-
-        select, input[type="text"], button {
+        input, button {
+            padding: 10px;
+            margin: 5px;
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-top: 8px;
-            display: inline-block;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc;
         }
-
-        button {
-            background-color: #2114d6;
-            color: white;
-            font-size: 14px;
-            font-weight: normal;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 10px;
-            width: auto;
-            padding: 6px 15px;
-            border-radius: 20px;
-            text-align: center;
+        .debt-list {
+            margin-top: 20px;
         }
-
-        button:hover {
-            background-color: #29cf00;
-        }
-
-        /* Kontainer untuk tombol "Beli Sekarang" dan WhatsApp */
-        .button-container {
+        .debt-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 4px;
             display: flex;
             justify-content: space-between;
-            gap: 10px; /* Jarak antar tombol */
+            align-items: center;
+            flex-wrap: wrap;
         }
-
-        /* Tombol WhatsApp */
-        .whatsapp-button {
-            background-color: #25D366;
+        .debt-item button {
+            background-color: #f44336;
             color: white;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 12px 15px;
-            border-radius: 20px;
-            text-align: center;
             border: none;
-            text-transform: uppercase;
-            flex: 1;
-        }
-
-        .whatsapp-button:hover {
-            background-color: #128C7E;
-        }
-
-        /* Tombol Beli Sekarang */
-        .buy-button {
-            background-color: #2114d6;
-            color: white;
-            font-size: 14px;
-            font-weight: normal;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            padding: 6px 15px;
-            border-radius: 20px;
-            text-align: center;
+            padding: 8px 15px;
+            margin-left: 10px;
+        }
+        .debt-item button:hover {
+            background-color: #d32f2f;
+        }
+        .debt-item p {
+            margin: 0;
             flex: 1;
+            text-align: left;
         }
-
-        .buy-button:hover {
-            background-color: #29cf00;
+        .payment-form {
+            display: flex;
+            margin-top: 10px;
+            justify-content: space-between;
+            width: 100%;
         }
-
-        /* Styling untuk tombol yang dipilih (method yang sudah dipilih) */
-        .selected-payment {
-            background-color: #29cf00; /* Warna hijau saat dipilih */
-            color: white; /* Warna teks putih */
-            border: 1px solid #29cf00; /* Border yang konsisten dengan warna hijau */
+        .payment-form input {
+            width: 70%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
         }
-
-        /* Responsif untuk perangkat mobile */
-        @media screen and (max-width: 768px) {
-            .container {
-                padding: 15px;
-                margin-top: 80px;
-                width: 90%;
-            }
-
-            .header {
-                font-size: 24px;
-                padding: 12px 0;
-            }
+        .payment-form button {
+            width: 28%;
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
-        #productPrice {
-            font-size: 20px; /* Ukuran font lebih besar */
-            font-weight: bold; /* Membuat teks lebih tebal */
-            color: #FF6347; /* Memberi warna yang mencolok (misalnya, merah tomat) */
-            background-color: #FFF8DC; /* Memberikan latar belakang sedikit kuning untuk kontras */
-            padding: 10px; /* Memberi padding untuk jarak antara teks dan batas */
-            border-radius: 8px; /* Memberikan sudut yang melengkung */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Memberikan bayangan halus di sekitar harga */
-            margin-top: 15px; /* Menambahkan jarak antara harga dan elemen lainnya */
-            text-align: center; /* Menempatkan harga di tengah */
+        .payment-form button:hover {
+            background-color: #45a049;
         }
-
-        /* Styling untuk deskripsi produk */
-        #productDescription {
-            font-size: 16px; /* Ukuran font standar untuk deskripsi */
-            color: #555; /* Warna teks abu-abu untuk deskripsi */
-            line-height: 1.6; /* Jarak antar baris yang nyaman dibaca */
-            padding: 15px; /* Memberikan jarak dalam deskripsi */
-            background-color: #f9f9f9; /* Latar belakang yang lebih terang */
-            border-radius: 8px; /* Sudut melengkung */
-            box-sizing: border-box;
-            margin-top: 10px; /* Memberikan jarak antara deskripsi dan elemen lainnya */
+        .debt-amount {
+            font-weight: bold;
+            color: #f44336;
+        }
+        .payment-history {
+            margin-top: 10px;
+            padding: 5px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .payment-history span {
+            display: block;
+        }
+        .debt-lunas {
+            color: green;
+            font-weight: bold;
+        }
+        .delete-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .payment-history div {
+            margin-bottom: 10px; /* Spasi antara setiap pembayaran */
+        }
+        .payment-history hr {
+            border: 1px solid #ccc;
+            margin: 10px 0;
+        }
+        .tagih-button {
+            background-color: #25d366 !important; /* Warna hijau WhatsApp */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .tagih-button:hover {
+            background-color: #128c7e !important; /* Warna hijau lebih gelap saat hover */
+        }
+        .total-debt {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px; /* Agar lebih dekat dengan daftar hutang */
+            color: #333;
+        }
+        .delete-all-payments-button {
+            background-color: #ff9800; /* Warna oranye untuk tombol hapus semua riwayat pembayaran */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .delete-all-payments-button:hover {
+            background-color: #fb8c00;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        SRC STORE
+<div class="container">
+    <h1>Sistem Pencatatan Hutang Pelanggan</h1>
+
+    <!-- Total Hutang dan Pembayaran --> 
+    <div class="total-debt">
+        <p>Total Hutang: Rp <span id="totalDebtAmount">0</span></p>
+        <p>Total Pembayaran: Rp <span id="totalPaymentsAmount">0</span></p>
     </div>
 
-    <div class="container">
-        <h1>SRC STORE</h1>
+    <!-- Tombol untuk menghapus semua riwayat pembayaran -->
+    <button class="delete-all-payments-button" onclick="deleteAllPayments()">Hapus Semua Riwayat Pembayaran</button>
 
-        <button onclick="toggleInfo()">BACA INI!</button>
+    <form id="debtForm">
+        <input type="text" id="customerName" placeholder="Nama Pelanggan" required>
+        <input type="text" id="customerPhone" placeholder="Nomor HP (Mulai dengan 62)" required>
+        <input type="number" id="debtAmount" placeholder="Jumlah Hutang" required>
+        <button type="submit">Tambah Hutang</button>
+    </form>
 
-        <div class="info-text" id="infoText">
-            <p>Ini adalah panel web otomatis berikut cara penggunaannya :<br>1. Masukkan data ke kolom serta pilih kategori dan produknya<br>2. Periksa lagi bahwa data dan produk yang dipilih sudah benar<br>3. Klik BELI untuk membeli produk, nanti akan diarahkan ke WhatsApp<br>4. Setelah di WhatsApp, kirim pesan yang sudah disusun otomatis oleh sistem ke nomor BOT<br>5. Tunggu dan pesanan akan diproses<br><br>SEMUA PESANAN DIPROSES OLEH SISTEM 24 JAM</p>
-        </div>
-
-        <!-- Kategori Utama -->
-        <div class="section">
-            <label for="category">Pilih Kategori:</label>
-            <select id="category">
-                <option value="">-- Pilih Kategori --</option>
-                <option value="paket_otp">PAKET OTP</option>
-                <option value="paket_nonotp">PAKET NON OTP</option>
-                <option value="paket_inject">PAKET INJECT</option>
-            </select>
-        </div>
-
-        <!-- Sub-Kategori -->
-        <div class="section">
-            <label for="subcategory">Pilih Sub-Kategori:</label>
-            <select id="subcategory" disabled>
-                <option value="">-- Pilih Sub-Kategori --</option>
-                <option value="pengelola_akrab">PENGELOLA AKRAB</option>
-            </select>
-            <div id="subcategoryDescription" style="margin-top: 10px; color: #555; font-size: 17px;"></div>
-        </div>
-
-        <!-- Produk -->
-        <div class="section">
-            <label for="product">Pilih Produk:</label>
-            <select id="product" disabled>
-                <option value="">-- Pilih Produk --</option>
-            </select>
-            <div id="productDescription" class="product-description-container"></div>
-            <div id="productPrice" class="price"></div>
-        </div>
-
-        <!-- Metode Pembayaran -->
-        <div id="paymentSection" style="display: none;">
-            <h3>Pilih Metode Pembayaran:</h3>
-            <ul id="paymentList"></ul>
-        </div>
-
-        <!-- Input No HP -->
-        <div class="section">
-            <label for="phone">Nomor Tujuan:</label>
-            <input type="text" id="phone" placeholder="Nomor Tujuan">
-        </div>
-
-        <!-- Kontainer Tombol Beli dan WhatsApp -->
-        <div class="button-container">
-            <!-- Tombol Beli Sekarang -->
-            <button class="buy-button" onclick="submitForm()">Beli Sekarang</button>
-
-            <!-- Tombol WhatsApp -->
-            <button class="whatsapp-button" onclick="redirectToWhatsAppGroup()">Chat via WhatsApp</button>
-        </div>
+    <div class="debt-list" id="debtList">
+        <h2>Daftar Hutang</h2>
+        <!-- Daftar hutang akan muncul di sini -->
     </div>
+</div>
 
-    <script>
-        let isInfoVisible = true;
+<script>
+    // Memeriksa apakah ada data hutang yang tersimpan di LocalStorage
+    let debts = JSON.parse(localStorage.getItem('debts')) || [];
 
-        function toggleInfo() {
-            const infoText = document.getElementById('infoText');
-            isInfoVisible = !isInfoVisible;
-            infoText.style.display = isInfoVisible ? 'block' : 'none';
-        }
+    // Fungsi untuk menampilkan daftar hutang dan mengurutkan berdasarkan hutang terbesar ke terkecil
+    function displayDebts() {
+    const debtList = document.getElementById('debtList');
+    debtList.innerHTML = '<h2>Daftar Hutang</h2>'; // Reset konten
 
-        const products = {
-            paket_otp: {
-                subcategories: {
-                    AKRAB_PENGELOLA: [
-                        { 
-                            name: 'Unlock anggota tambahan Akrab', 
-                            code: 'XAA1',
-                            perintah: 'ORDERVERIF',
-                            price: 'Rp 2000', 
-                            paymentMethods: ['pulsa', 'dana', 'tidak'], 
-                            description: '<br>~ Unlock Anggota tambahan akrab<br>~ Sediakan pulsa 20.000',
-                            subcategoryDescription: 'setelah dor,urusan kita selesai. Cek OTP kamu di [ https://myxl.nfime.xyz ]' 
-                        }
-                    ]
-                }
-            }
-        };
+    let totalDebt = 0;
+    let totalPayments = 0;
 
-        const categorySelect = document.getElementById('category');
-        const subcategorySelect = document.getElementById('subcategory');
-        const productSelect = document.getElementById('product');
-        const productPrice = document.getElementById('productPrice');
-        const productDescription = document.getElementById('productDescription');
-        const subcategoryDescription = document.getElementById('subcategoryDescription');
-        const paymentSection = document.getElementById('paymentSection');
-        const paymentList = document.getElementById('paymentList');
-        let selectedPaymentMethod = null;
+    if (debts.length === 0) {
+        debtList.innerHTML += '<p>Tidak ada hutang tercatat.</p>';
+        document.getElementById('totalDebtAmount').innerText = totalDebt.toLocaleString();
+        document.getElementById('totalPaymentsAmount').innerText = totalPayments.toLocaleString();
+        return;
+    }
 
-        categorySelect.addEventListener('change', function() {
-            const category = this.value;
-            subcategorySelect.innerHTML = '<option value="">-- Pilih Sub-Kategori --</option>';
-            productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
-            productPrice.innerHTML = '';
-            productDescription.innerHTML = '';
-            subcategoryDescription.innerHTML = '';
-            paymentSection.style.display = 'none';
+    // Mengurutkan berdasarkan hutang terbesar ke terkecil, dan hutang lunas di bagian bawah
+    debts.sort((a, b) => {
+        if (a.amount === 0 && b.amount === 0) return 0; // Jika keduanya lunas, urutkan normal
+        if (a.amount === 0) return 1; // Jika a lunas, b di atas
+        if (b.amount === 0) return -1; // Jika b lunas, a di atas
+        return b.amount - a.amount; // Urutkan berdasarkan jumlah hutang
+    });
 
-            if (category && products[category]) {
-                const subcategories = products[category].subcategories;
-                Object.keys(subcategories).forEach(subcategory => {
-                    const option = document.createElement('option');
-                    option.value = subcategory;
-                    // Mengganti "_" dengan spasi pada subkategori
-                    option.textContent = subcategory.replace(/_/g, ' ');
-                    subcategorySelect.appendChild(option);
-                });
-                subcategorySelect.disabled = false;
+    debts.forEach((debt, index) => {
+        const debtItem = document.createElement('div');
+        debtItem.classList.add('debt-item');
+        debtItem.innerHTML = `
+    <p>${debt.customerName} - ${debt.customerPhone} - <span class="debt-amount">Rp ${debt.amount.toLocaleString()}</span>
+    ${debt.amount <= 0 ? '<span class="debt-lunas">Hutang Lunas</span>' : ''}</p>
+    ${debt.amount > 0 ? `
+        <button class="pay-button" data-index="${index}">Bayar</button>
+        <div id="paymentForm${index}" class="payment-form" style="display: none;">
+            <input type="number" id="paymentAmount${index}" placeholder="Jumlah Pembayaran" />
+            <button class="confirm-payment" data-index="${index}">Konfirmasi Pembayaran</button>
+        </div>
+    ` : ''}
+    <button onclick="addDebtAmount(${index})">Tambah Hutang</button>
+    <div class="payment-history">
+        <h4>Riwayat Pembayaran</h4>
+        ${debt.payments.map(payment => {
+            return `
+                <span>
+                    Tanggal: ${payment.date} | 
+                    Pembayaran: Rp ${payment.paid.toLocaleString()} | 
+                    Setelah: Rp ${payment.after.toLocaleString()}
+                </span>
+                <hr />
+            `;
+        }).join('')}
+    </div>
+    ${debt.amount <= 0 ? `<button onclick="removeCustomerData(${index})">Hapus Data</button>` : ''}
+    <!-- Menghapus tombol Hapus Riwayat Pembayaran di sini -->
+    <button class="tagih-button" onclick="tagihCustomer(${index})">Tagih via WhatsApp</button>
+`;
+        debtList.appendChild(debtItem);
+
+        totalDebt += debt.amount;
+        totalPayments += debt.payments.reduce((acc, payment) => acc + payment.paid, 0);
+    });
+
+    // Menampilkan total hutang dan total pembayaran
+    document.getElementById('totalDebtAmount').innerText = totalDebt.toLocaleString();
+    document.getElementById('totalPaymentsAmount').innerText = totalPayments.toLocaleString();
+
+    // Menambahkan event listener untuk tombol bayar
+    const payButtons = document.querySelectorAll('.pay-button');
+    payButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const index = this.getAttribute('data-index');
+            const paymentForm = document.getElementById(`paymentForm${index}`);
+
+            // Toggle tampilan form pembayaran (show/hide)
+            if (paymentForm.style.display === "none" || paymentForm.style.display === "") {
+                paymentForm.style.display = "flex";
             } else {
-                subcategorySelect.disabled = true;
+                paymentForm.style.display = "none";
             }
         });
+    });
 
-        // Update event listener untuk subkategori dan produk
-        subcategorySelect.addEventListener('change', function() {
-            const category = categorySelect.value;
-            const subcategory = this.value;
-            productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
-            productPrice.innerHTML = '';
-            productDescription.innerHTML = '';
-            subcategoryDescription.innerHTML = '';
-            paymentSection.style.display = 'none';
+    // Konfirmasi pembayaran
+    const confirmPaymentButtons = document.querySelectorAll('.confirm-payment');
+    confirmPaymentButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const index = this.getAttribute('data-index');
+            const paymentAmount = parseInt(document.getElementById(`paymentAmount${index}`).value);
 
-            if (category && subcategory && products[category]) {
-                const subcategoryProducts = products[category].subcategories[subcategory];
-                subcategoryProducts.forEach(product => {
-                    const option = document.createElement('option');
-                    option.value = product.code;
-                    option.textContent = product.name;
-                    productSelect.appendChild(option);
-                });
-
-                // Menampilkan deskripsi subkategori
-                const subcategoryInfo = subcategoryProducts[0].subcategoryDescription;
-                subcategoryDescription.innerHTML = subcategoryInfo;
-                productSelect.disabled = false;
-            } else {
-                productSelect.disabled = true;
-            }
-        });
-
-        // Update event listener untuk produk
-        productSelect.addEventListener('change', function() {
-            const category = categorySelect.value;
-            const subcategory = subcategorySelect.value;
-            const productCode = this.value;
-            productPrice.innerHTML = '';
-            productDescription.innerHTML = '';
-            paymentSection.style.display = 'none';
-
-            if (category && subcategory && productCode && products[category]) {
-                const subcategoryProducts = products[category].subcategories[subcategory];
-                const product = subcategoryProducts.find(p => p.code === productCode);
-                if (product) {
-                    // Menampilkan harga produk dengan styling khusus
-                    productPrice.innerHTML = product.price;
-                    productDescription.innerHTML = product.description;
-                    productDescription.style.display = 'block';
-                    paymentSection.style.display = 'block';
-                    paymentList.innerHTML = '';
-
-                    // Menampilkan metode pembayaran
-                    product.paymentMethods.forEach(method => {
-                        const button = document.createElement('button');
-                        button.textContent = method;
-                        button.classList.add('payment-button');
-                        button.onclick = () => selectPaymentMethod(method, button);
-                        paymentList.appendChild(button);
-                    });
-                }
-            }
-        });
-
-        function selectPaymentMethod(method, button) {
-            selectedPaymentMethod = method;
-
-            // Menghapus kelas 'selected-payment' dari semua tombol
-            document.querySelectorAll('.payment-button').forEach(btn => btn.classList.remove('selected-payment'));
-
-            // Menambahkan kelas 'selected-payment' ke tombol yang dipilih
-            button.classList.add('selected-payment');
-        }
-
-        function submitForm() {
-            const category = categorySelect.value;
-            const subcategory = subcategorySelect.value;
-            const productCode = productSelect.value;
-            const phone = document.getElementById('phone').value;
-
-            if (!subcategory || !productCode || !phone || !selectedPaymentMethod) {
-                alert('Mohon lengkapi semua informasi.');
+            if (isNaN(paymentAmount) || paymentAmount <= 0 || paymentAmount > debts[index].amount) {
+                alert("Jumlah pembayaran tidak valid!");
                 return;
             }
 
-            const selectedProduct = products[category]?.subcategories[subcategory]?.find(product => product.code === productCode);
-            const productName = selectedProduct ? selectedProduct.name : '';
-            const perintah = selectedProduct ? selectedProduct.perintah : '';
+            // Memperbarui hutang dan riwayat pembayaran
+            const date = new Date().toLocaleString();
+            debts[index].amount -= paymentAmount;
+            debts[index].payments.push({
+                paid: paymentAmount,
+                after: debts[index].amount,
+                date: date
+            });
 
-            let message;
+            // Simpan ke LocalStorage
+            localStorage.setItem('debts', JSON.stringify(debts));
 
-            // Cek apakah payment method ada
-            if (selectedPaymentMethod !== 'tidak') {
-                // Gabungkan parameter dengan titik satu kali, pastikan tidak ada titik ganda
-                message = `${perintah} ${productCode}.${phone}.${selectedPaymentMethod}`;
-            } else {
-                // Jika payment method tidak dipilih, hanya gabungkan perintah, kode produk, dan nomor tujuan
-                message = `${perintah} ${productCode}.${phone}`;
-            }
+            // Tampilkan kembali daftar hutang
+            displayDebts();
+        });
+    });
+}
 
-            const phoneNumber = '6287717272676';  // Ganti dengan nomor WhatsApp yang sesuai
-            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
-            window.open(whatsappURL, '_blank');
+    // Fungsi untuk menghapus semua riwayat pembayaran
+    function deleteAllPayments() {
+        debts.forEach(debt => {
+            debt.payments = [];
+        });
+        localStorage.setItem('debts', JSON.stringify(debts));
+        displayDebts();
+    }
+
+    // Fungsi untuk menambah hutang
+    function addDebt() {
+        const customerName = document.getElementById('customerName').value;
+        const customerPhone = document.getElementById('customerPhone').value;
+        const debtAmount = parseInt(document.getElementById('debtAmount').value);
+
+        if (!customerName || !customerPhone || isNaN(debtAmount) || debtAmount <= 0) {
+            alert('Harap lengkapi semua field dengan benar!');
+            return;
         }
 
-        function redirectToWhatsAppGroup() {
-            const groupLink = "https://chat.whatsapp.com/your-group-link"; // Ganti dengan link grup WhatsApp kamu
-            window.open(groupLink, '_blank');
+        debts.push({
+            customerName,
+            customerPhone,
+            amount: debtAmount,
+            payments: []
+        });
+
+        localStorage.setItem('debts', JSON.stringify(debts));
+        displayDebts();
+
+        document.getElementById('customerName').value = '';
+        document.getElementById('customerPhone').value = '';
+        document.getElementById('debtAmount').value = '';
+    }
+
+    // Fungsi untuk tagih lewat WhatsApp
+    function tagihCustomer(index) {
+        const debt = debts[index];
+        const message = `Halo ${debts[index].customerName},\n\n
+Hutang kamu di kami masih Rp ${debts[index].amount.toLocaleString()}. Bisa dibayarkan besok, ya? 😉\n\n
+Kami tunggu pembayarannya! Terima kasih.`;
+        const phoneNumber = debt.customerPhone.startsWith('62') ? debt.customerPhone : '62' + debt.customerPhone.slice(1);
+        window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`);
+    }
+
+    // Fungsi untuk menghapus data pelanggan
+    function removeCustomerData(index) {
+        debts.splice(index, 1);
+        localStorage.setItem('debts', JSON.stringify(debts));
+        displayDebts();
+    }
+
+    // Fungsi untuk menambah hutang
+    function addDebtAmount(index) {
+        const additionalAmount = prompt('Masukkan jumlah hutang tambahan:');
+        const amount = parseInt(additionalAmount);
+        if (!isNaN(amount) && amount > 0) {
+            debts[index].amount += amount;
+            localStorage.setItem('debts', JSON.stringify(debts));
+            displayDebts();
         }
-    </script>
+    }
+
+    // Inisialisasi halaman
+    document.getElementById('debtForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        addDebt();
+    });
+
+    // Menampilkan data hutang
+    displayDebts();
+</script>
+
 </body>
 </html>
