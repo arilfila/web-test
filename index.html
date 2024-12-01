@@ -268,7 +268,6 @@
             let totalDebt = 0;
             let totalPayments = 0;
     
-            // Menampilkan seluruh hutang (tidak hanya yang difilter)
             debts.forEach((debt, index) => {
                 const debtItem = document.createElement('div');
                 debtItem.classList.add('debt-item');
@@ -322,49 +321,29 @@
     
         // Fungsi pencarian pelanggan berdasarkan nama
         function searchDebts() {
-            searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            displayDebts(); // Menampilkan seluruh daftar hutang
+            // Ambil nilai input pencarian
+            searchQuery = document.getElementById('searchInput').value;
     
-            // Scroll otomatis ke elemen yang pertama kali cocok dengan pencarian
+            // Tampilkan data yang sudah difilter
+            displayDebts();
+    
+            // Setelah melakukan pencarian, cari dan scroll ke elemen yang sesuai
             if (searchQuery) {
-                const matchedDebtItem = Array.from(document.getElementsByClassName('debt-item')).find(debtItem => 
-                    debtItem.innerText.toLowerCase().includes(searchQuery)
-                );
+                // Cari elemen yang mengandung teks yang cocok dengan pencarian
+                const matchedDebtItem = Array.from(document.getElementsByClassName('debt-item')).find(debtItem => {
+                    const debtText = debtItem.innerText.toLowerCase();  // Mengambil teks di dalam elemen
+                    return debtText.includes(searchQuery.toLowerCase()); // Mencocokkan dengan searchQuery
+                });
     
                 if (matchedDebtItem) {
+                    // Jika ditemukan, scroll otomatis ke elemen yang pertama ditemukan
                     matchedDebtItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }
         }
     
-        // Menambahkan hutang baru ke dalam array debts dan menyimpannya
-        document.getElementById('debtForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-    
-            const customerName = document.getElementById('customerName').value;
-            const customerPhone = document.getElementById('customerPhone').value;
-            const debtAmount = parseFloat(document.getElementById('debtAmount').value);
-    
-            if (customerName && customerPhone && !isNaN(debtAmount)) {
-                const newDebt = {
-                    customerName: customerName,
-                    customerPhone: customerPhone,
-                    amount: debtAmount,
-                    originalAmount: debtAmount, // Menyimpan jumlah hutang asli
-                    payments: []
-                };
-    
-                debts.push(newDebt);
-                localStorage.setItem('debts', JSON.stringify(debts));
-                displayDebts();
-    
-                // Reset form
-                document.getElementById('debtForm').reset();
-            }
-        });
-    
         // Menampilkan daftar hutang awal
-        displayDebts();    
+        displayDebts();
 
 // Fungsi untuk mengedit data pelanggan
 function editCustomerData(index) {
@@ -393,11 +372,6 @@ function editCustomerData(index) {
     }
 }
 
-// Fungsi pencarian pelanggan berdasarkan nama
-function searchDebts(query) {
-    searchQuery = query.toLowerCase(); // Mengubah query menjadi huruf kecil untuk pencocokan yang tidak case-sensitive
-    displayDebts(); // Menampilkan daftar yang sudah difilter
-}
 
 // Fungsi untuk toggle form pembayaran
 function togglePaymentForm(index) {
@@ -471,12 +445,6 @@ function backupData() {
     backupTextarea.textContent = backupText; // Mengisi textarea dengan data backup
 
 }
-
-        // Fungsi untuk mencari hutang
-        function searchDebts() {
-            searchQuery = document.getElementById('searchInput').value;
-            displayDebts();
-        }
     
         // Fungsi untuk menghapus semua riwayat pembayaran
 function deleteAllPayments() {
