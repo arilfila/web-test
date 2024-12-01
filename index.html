@@ -147,21 +147,55 @@
             background-color: #fb8c00;
         }
 
-        /* Gaya untuk tombol Hapus Data ketika hutang lunas */
-        .delete-lunas-button {
-            background-color: black;  /* Anda bisa mengubah ini dengan warna yang Anda inginkan */
+/* Tombol Edit di sebelah nama pelanggan */
+.debt-item {
+    background-color: #daccb9ce;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    position: relative; /* Menjaga tombol tetap di dalam konteks item */
+}
+
+/* Gaya untuk tombol Edit */
+.edit-button {
+    background-color: #ff9800; /* Warna tombol */
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-left: 10px; /* Jarak dari nama pelanggan */
+}
+
+.edit-button:hover {
+    background-color: #fb8c00; /* Efek hover */
+}
+
+/* Styling untuk tombol backup */
+.backup-button {
+            background-color: #1c2cbb;
             color: white;
             padding: 8px 15px;
             border: none;
             cursor: pointer;
-            margin-top: 10px;
             border-radius: 4px;
-            text-align: center;
+            margin-top: 10px;
+        }
+        .backup-button:hover {
+            background-color: #1c1b5f;
         }
 
-        /* Efek hover untuk tombol Hapus Data ketika hutang lunas */
-        .delete-lunas-button:hover {
-            background-color: #333;  /* Ubah warna ini untuk efek hover */
+        /* Styling untuk textarea backup */
+        #backupTextarea {
+            white-space: pre-wrap;
+            font-family: monospace;
+            overflow-x: auto;
+            height: 200px;
         }
 
     </style>
@@ -181,6 +215,11 @@
         </div>
     
         <button class="delete-all-payments-button" onclick="deleteAllPayments()">Hapus Semua Riwayat Pembayaran</button>
+        <button class="backup-button" onclick="backupData()">Backup Data Hutang</button>
+        <!-- Tambahkan tombol untuk menyalin di bawah textarea -->
+<button id="copyBackupButton" class="backup-button" style="display: none;" onclick="copyBackupData()">Salin Data</button>
+
+
     
         <form id="debtForm">
             <input type="text" id="customerName" placeholder="Nama Pelanggan" required>
@@ -193,6 +232,9 @@
             <h2>Daftar Hutang</h2>
             <!-- Daftar hutang akan muncul di sini -->
         </div>
+        <pre id="backupTextarea" style="margin-top: 20px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc; display: none;"></pre>
+
+
     </div>
     
     <script>
@@ -200,68 +242,99 @@
         let debts = JSON.parse(localStorage.getItem('debts')) || [];
         let searchQuery = '';
     
-        // Fungsi untuk menampilkan daftar hutang
-        function displayDebts() {
-            const debtList = document.getElementById('debtList');
-            debtList.innerHTML = '<h2>Daftar Hutang</h2>'; // Reset konten
-    
-            let totalDebt = 0;
-            let totalPayments = 0;
-    
-            // Filter hutang berdasarkan nama yang dicari
-            const filteredDebts = debts.filter(debt =>
-                debt.customerName.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-    
-            if (filteredDebts.length === 0) {
-                debtList.innerHTML += '<p>Tidak ada hutang yang sesuai dengan pencarian.</p>';
-                document.getElementById('totalDebtAmount').innerText = totalDebt.toLocaleString();
-                document.getElementById('totalPaymentsAmount').innerText = totalPayments.toLocaleString();
-                return;
-            }
-    
-            filteredDebts.forEach((debt, index) => {
-                const debtItem = document.createElement('div');
-                debtItem.classList.add('debt-item');
-                debtItem.innerHTML = `
-                    <p>${debt.customerName} - ${debt.customerPhone} - <span class="debt-amount">Rp ${debt.amount.toLocaleString()}</span>
-                    ${debt.amount <= 0 ? '<span class="debt-lunas">Hutang Lunas</span>' : ''}</p>
-                    ${debt.amount > 0 ? `
-                        <button class="pay-button" onclick="togglePaymentForm(${index})">Bayar</button>
-                        <div id="paymentForm${index}" class="payment-form" style="display: none;">
-                            <input type="number" id="paymentAmount${index}" placeholder="Jumlah Pembayaran" />
-                            <button class="confirm-payment" onclick="confirmPayment(${index})">Konfirmasi Pembayaran</button>
-                        </div>
-                    ` : ''}
-                    <button onclick="addDebtAmount(${index})">Tambah Hutang</button>
-                    <div class="payment-history">
-                        <h4>Riwayat Pembayaran</h4>
-                        ${debt.payments.map(payment => {
-                            return `
-                                <span>
-                                    Tanggal: ${payment.date} | 
-                                    Pembayaran: Rp ${payment.paid.toLocaleString()} | 
-                                    Setelah: Rp ${payment.after.toLocaleString()}
-                                </span>
-                                <hr />
-                            `;
-                        }).join('')}
-                    </div>
-                    ${debt.amount <= 0 ? `<button class="delete-lunas-button" onclick="removeCustomerData(${index})">Hapus Data</button>` : ''}
-                    <button class="tagih-button" onclick="tagihCustomer(${index})">Tagih via WhatsApp</button>
-                `;
-    
-                debtList.appendChild(debtItem);
-    
-                totalDebt += debt.amount;
-                totalPayments += debt.payments.reduce((sum, payment) => sum + payment.paid, 0);
-            });
-    
-            // Update total debt and payment values
-            document.getElementById('totalDebtAmount').innerText = totalDebt.toLocaleString();
-            document.getElementById('totalPaymentsAmount').innerText = totalPayments.toLocaleString();
-        }
-    
+      // Fungsi untuk menampilkan daftar hutang
+function displayDebts() {
+    const debtList = document.getElementById('debtList');
+    debtList.innerHTML = '<h2>Daftar Hutang</h2>'; // Reset konten
+
+    let totalDebt = 0;
+    let totalPayments = 0;
+
+    // Filter hutang berdasarkan nama yang dicari
+    const filteredDebts = debts.filter(debt =>
+        debt.customerName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (filteredDebts.length === 0) {
+        debtList.innerHTML += '<p>Tidak ada hutang yang sesuai dengan pencarian.</p>';
+        document.getElementById('totalDebtAmount').innerText = totalDebt.toLocaleString();
+        document.getElementById('totalPaymentsAmount').innerText = totalPayments.toLocaleString();
+        return;
+    }
+
+    filteredDebts.forEach((debt, index) => {
+        const debtItem = document.createElement('div');
+        debtItem.classList.add('debt-item');
+        debtItem.innerHTML = `
+            <div style="display: flex; align-items: center;">
+                <p>${debt.customerName} <br> ${debt.customerPhone} <br> <span class="debt-amount">Rp ${debt.amount.toLocaleString()}</span>
+                ${debt.amount <= 0 ? '<br><span class="debt-lunas">Hutang Lunas</span>' : ''}
+                </p>
+                <button class="edit-button" onclick="editCustomerData(${index})">Edit</button> <!-- Tombol Edit -->
+            </div>
+            ${debt.amount > 0 ? `
+                <button class="pay-button" onclick="togglePaymentForm(${index})">Bayar</button>
+                <div id="paymentForm${index}" class="payment-form" style="display: none;">
+                    <input type="number" id="paymentAmount${index}" placeholder="Jumlah Pembayaran" />
+                    <button class="confirm-payment" onclick="confirmPayment(${index})">Konfirmasi Pembayaran</button>
+                </div>
+            ` : ''}
+            <button onclick="addDebtAmount(${index})">Tambah Hutang</button>
+            <div class="payment-history">
+                <h4>Riwayat Pembayaran</h4>
+                ${debt.payments.map(payment => {
+                    return `
+                        <span>
+                            Tanggal: ${payment.date} | 
+                            Pembayaran: Rp ${payment.paid.toLocaleString()} | 
+                            Setelah: Rp ${payment.after.toLocaleString()}
+                        </span>
+                        <hr />
+                    `;
+                }).join('')}
+            </div>
+            ${debt.amount <= 0 ? `<button class="delete-lunas-button" onclick="removeCustomerData(${index})">Hapus Data</button>` : ''}
+            <button class="tagih-button" onclick="tagihCustomer(${index})">Tagih via WhatsApp</button>
+        `;
+
+        debtList.appendChild(debtItem);
+
+        totalDebt += debt.amount;
+        totalPayments += debt.payments.reduce((sum, payment) => sum + payment.paid, 0);
+    });
+
+    // Update total debt and payment values
+    document.getElementById('totalDebtAmount').innerText = totalDebt.toLocaleString();
+    document.getElementById('totalPaymentsAmount').innerText = totalPayments.toLocaleString();
+}
+
+// Fungsi untuk mengedit data pelanggan
+function editCustomerData(index) {
+    const debt = debts[index];
+
+    // Tampilkan form edit
+    const newName = prompt("Edit Nama Pelanggan:", debt.customerName);
+    const newPhone = prompt("Edit Nomor HP:", debt.customerPhone);
+    const newDebtAmount = prompt("Edit Jumlah Hutang:", debt.amount);
+
+    // Validasi input
+    if (newName && newPhone && !isNaN(newDebtAmount) && newDebtAmount >= 0) {
+        // Memperbarui data pelanggan
+        debt.customerName = newName;
+        debt.customerPhone = newPhone;
+        debt.amount = parseFloat(newDebtAmount);
+
+        // Simpan perubahan ke localStorage
+        localStorage.setItem('debts', JSON.stringify(debts));
+
+        // Menampilkan kembali daftar hutang
+        displayDebts();
+    } else {
+        alert("Input tidak valid. Pastikan semua data diisi dengan benar.");
+    }
+}
+
+
         // Fungsi untuk toggle form pembayaran
         function togglePaymentForm(index) {
             const paymentForm = document.getElementById(`paymentForm${index}`);
@@ -273,24 +346,34 @@
         }
     
         // Fungsi untuk konfirmasi pembayaran
-        function confirmPayment(index) {
-            const paymentAmount = parseFloat(document.getElementById(`paymentAmount${index}`).value);
-    
-            if (paymentAmount > 0 && debts[index].amount > 0) {
-                const debt = debts[index];
-                const newAmount = debt.amount - paymentAmount;
-                debt.amount = newAmount < 0 ? 0 : newAmount;
-    
-                debt.payments.push({
-                    date: new Date().toLocaleString(),
-                    paid: paymentAmount,
-                    after: debt.amount
-                });
-    
-                localStorage.setItem('debts', JSON.stringify(debts));
-                displayDebts();
-            }
-        }
+function confirmPayment(index) {
+    const paymentAmount = parseFloat(document.getElementById(`paymentAmount${index}`).value);
+    const debt = debts[index];
+
+    // Mengecek apakah jumlah pembayaran lebih besar dari hutang yang tersisa
+    if (paymentAmount > debt.amount) {
+        alert("Jumlah pembayaran tidak boleh melebihi jumlah hutang yang tersisa.");
+        return; // Batalkan pembayaran jika melebihi
+    }
+
+    // Pastikan pembayaran lebih besar dari 0
+    if (paymentAmount > 0 && debt.amount > 0) {
+        const newAmount = debt.amount - paymentAmount;
+        debt.amount = newAmount < 0 ? 0 : newAmount;
+
+        // Menambahkan riwayat pembayaran
+        debt.payments.push({
+            date: new Date().toLocaleString(),
+            paid: paymentAmount,
+            after: debt.amount
+        });
+
+        // Simpan data hutang yang diperbarui
+        localStorage.setItem('debts', JSON.stringify(debts));
+        displayDebts(); // Update tampilan
+    }
+}
+
     
         // Fungsi untuk menambahkan hutang baru
         function addDebtAmount(index) {
@@ -310,7 +393,39 @@
             localStorage.setItem('debts', JSON.stringify(debts));
             displayDebts();
         }
+
+        // Fungsi untuk menyalin data backup ke clipboard
+function copyBackupData() {
+    const backupTextarea = document.getElementById('backupTextarea');
     
+    // Pilih dan salin teks dari textarea
+    backupTextarea.select();
+    backupTextarea.setSelectionRange(0, 99999); // Untuk perangkat mobile
+
+    // Salin teks ke clipboard
+    document.execCommand('copy');
+
+    // Tampilkan alert untuk konfirmasi
+    alert("Data telah disalin ke clipboard!");
+}
+
+    
+// Fungsi untuk melakukan backup data hutang
+function backupData() {
+    const backupText = debts.map(debt => {
+        return `${debt.customerName} (${debt.customerPhone}) - Hutang: Rp ${debt.amount.toLocaleString()}\nPembayaran:\n` +
+            debt.payments.map(payment => `- Rp ${payment.paid.toLocaleString()} (${payment.date})`).join('\n') + '\n';
+    }).join('\n');
+
+    // Tampilkan hasil backup di dalam textarea
+    const backupTextarea = document.getElementById('backupTextarea');
+    backupTextarea.style.display = 'block'; // Menampilkan textarea
+    backupTextarea.textContent = backupText; // Mengisi textarea dengan data backup
+
+    // Tampilkan tombol salin
+    document.getElementById('copyBackupButton').style.display = 'block'; // Menampilkan tombol salin
+}
+
         // Fungsi untuk mencari hutang
         function searchDebts() {
             searchQuery = document.getElementById('searchInput').value;
@@ -323,6 +438,16 @@ function deleteAllPayments() {
         // Hapus hanya riwayat pembayaran tanpa mengubah jumlah hutang
         debt.payments = [];
     });
+
+    // Fungsi untuk backup data
+    function backupData() {
+            const backupText = debts.map(debt => {
+                return `${debt.customerName} (${debt.customerPhone}) - Hutang: Rp ${debt.amount.toLocaleString()}\nPembayaran:\n` +
+                    debt.payments.map(payment => `  - Rp ${payment.amount.toLocaleString()} (${payment.date})`).join('\n') + '\n\n';
+            }).join('\n');
+
+            document.getElementById('backupTextarea').value = backupText;
+        }
 
     // Simpan perubahan ke localStorage
     localStorage.setItem('debts', JSON.stringify(debts));
