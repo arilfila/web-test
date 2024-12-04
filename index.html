@@ -925,16 +925,16 @@ function deleteAllPayments() {
         // Fungsi untuk tagih lewat WhatsApp
         function tagihCustomer(index) {
             const debt = debts[index];
-            const message = `Halo ${debts[index].customerName},\n\n
+            const message = `Halo ${debts[index].customerName},
 ─────────────────────────────────────\n
-Kami ingin mengingatkan bahwa kamu masih memiliki hutang sebesar:\n
- Rp ${debts[index].amount.toLocaleString()}\n\n
+Kami ingin mengingatkan bahwa kamu masih memiliki hutang sebesar:
+Rp ${debts[index].amount.toLocaleString()}
 ─────────────────────────────────────\n
-Kami harap pembayaran dapat dilakukan dalam waktu dekat. Bisa dibayarkan besok, ya? \n\n
+Kami harap pembayaran dapat dilakukan dalam waktu dekat. Bisa dibayarkan besok, ya?
 ─────────────────────────────────────\n
-Jika ada pertanyaan atau kesulitan, jangan ragu untuk menghubungi kami. Kami tunggu pembayarannya! \n\n
+Jika ada pertanyaan atau kesulitan, jangan ragu untuk menghubungi kami. Kami tunggu pembayarannya! 
 ─────────────────────────────────────\n
-Terima kasih banyak atas kerjasamanya!\n\n
+Terima kasih banyak atas kerjasamanya!
 Salam hangat,\n
 [SAERAH CELL]`;
 
