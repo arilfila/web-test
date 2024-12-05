@@ -442,16 +442,15 @@
 <body>
 
     <div class="container">
-        <h1>Sistem Pencatatan Hutang Pelanggan</h1>
-    
-        <form id="searchForm">
-            <input type="text" id="searchInput" placeholder="Cari Nama Pelanggan">
-            <button type="button" class="button-cari" onclick="searchDebts()">Cari</button>
-        </form>
+        <h1>SERAH CELL</h1>
+
+            <form id="searchForm">
+                <input type="text" id="searchInput" placeholder="Cari Nama Pelanggan" oninput="searchDebts()">
+            </form>
 
         <div class="total-debt">
             <p>Total Hutang: Rp <span id="totalDebtAmount">0</span></p>
-            <p>Total Pembayaran: Rp <span id="totalPaymentsAmount" class="clickable-text">0</span></p>
+            <p>Pembayaran: Rp <span id="totalPaymentsAmount" class="clickable-text">0</span></p>
         </div>  
 
             <!-- Tempat untuk menampilkan pelanggan dengan pembayaran lebih dari 0 -->
@@ -462,7 +461,7 @@
 
         <div class="total-debt">
             <p>
-                Total Kembalian: Rp <span id="totalReturnAmount" class="clickable-text">0</span>
+                Kembalian: Rp <span id="totalReturnAmount" class="clickable-text">0</span>
             </p>
         </div>
         
@@ -681,6 +680,35 @@ function viewReturnCustomers() {
         }
     }
 }
+// Fungsi untuk form kembalian
+function processReturn(index) {
+    // Simpan posisi scroll sebelumnya
+    const lastScrollPosition = window.scrollY;
+
+    const returnAmountInput = parseInt(document.getElementById(`returnAmount${index}`).value);
+
+    if (isNaN(returnAmountInput)) {
+        alert("Masukkan jumlah kembalian yang valid!");
+        return;
+    }
+
+    const debt = debts[index];
+
+    // Jika nilai kembalian belum ada, inisialisasi
+    if (debt.returnAmount === undefined) {
+        debt.returnAmount = 0;
+    }
+
+    // Update nilai kembalian
+    debt.returnAmount += returnAmountInput;
+
+    // Simpan data hutang yang sudah diupdate ke localStorage
+    localStorage.setItem('debts', JSON.stringify(debts));
+
+    // Update tampilan daftar hutang
+    displayDebts();
+}
+
 
 // Menambahkan event listener untuk elemen totalReturnAmount agar dapat diklik
 document.getElementById('totalReturnAmount').addEventListener('click', function() {
@@ -700,37 +728,8 @@ document.getElementById('totalReturnAmount').addEventListener('click', function(
         returnForm.style.display = 'block';
     }
 }       
-  // Fungsi untuk menghitung dan menyimpan kembalian, dengan pengurangan jika nominal kembalian negatif
-function processReturn(index) {
-    const returnAmountInput = parseInt(document.getElementById(`returnAmount${index}`).value);
-    
-    if (isNaN(returnAmountInput)) {
-        alert("Masukkan jumlah kembalian yang valid!");
-        return;
-    }
+ 
 
-    const debt = debts[index];
-    
-    // Jika nilai kembalian sudah ada, tambahkan perubahan pada kembalian
-    if (debt.returnAmount === undefined) {
-        debt.returnAmount = 0; // Inisialisasi kembalian jika belum ada
-    }
-
-    // Mengupdate nilai kembalian dengan menambahkan input baru
-    debt.returnAmount += returnAmountInput;
-
-    // Simpan kembali ke localStorage untuk memastikan data tetap tersimpan
-    localStorage.setItem('debts', JSON.stringify(debts));
-
-    // Tampilkan kembali daftar hutang setelah kembalian dihitung
-    displayDebts();
-}
-
-function sanitizePhoneInput(event) {
-    let input = event.target;
-    // Menghapus semua karakter selain angka
-    input.value = input.value.replace(/[^0-9]/g, '');
-}
 // Fungsi untuk mencari data customer
 function searchDebts() {
     // Ambil nilai input pencarian
@@ -760,7 +759,6 @@ function searchDebts() {
         filteredDebtItems[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
-
 // Fungsi untuk mengedit data pelanggan
 function editCustomerData(index) {
     // Cari data pelanggan berdasarkan index yang diklik
@@ -798,7 +796,7 @@ function togglePaymentForm(index) {
         paymentForm.style.display = "none";
     }
 }
-
+// Fungsi untuk konfirmasi pembayaran
 function confirmPayment(index) {
     const paymentAmount = parseFloat(document.getElementById(`paymentAmount${index}`).value);
     const debt = debts[index];
@@ -808,11 +806,18 @@ function confirmPayment(index) {
         const returnAmount = paymentAmount - debt.amount; // Menghitung kembalian
         debt.returnAmount = returnAmount; // Menyimpan kembalian dalam data hutang
 
-        // Menampilkan pesan kembalian
-        alert(`Pembayaran melebihi jumlah hutang. Kembalian Anda adalah: ${returnAmount}`);
+        // Menyimpan riwayat pembayaran yang mencatat jumlah pembayaran yang lebih besar dari hutang
+        debt.payments.push({
+            date: new Date().toLocaleString(),
+            paid: debt.amount,  // Jumlah yang dibayar sesuai dengan hutang
+            after: 0  // Setelah pembayaran, hutang menjadi 0
+        });
 
         // Setel jumlah hutang menjadi 0
         debt.amount = 0;
+
+        // Menampilkan pesan kembalian
+        alert(`Pembayaran melebihi jumlah hutang. Kembalian Anda adalah: ${returnAmount}`);
     } else if (paymentAmount <= 0) {
         // Jika pembayaran kurang dari atau sama dengan 0, tampilkan peringatan
         alert("Jumlah pembayaran harus lebih besar dari 0.");
@@ -821,18 +826,33 @@ function confirmPayment(index) {
         // Jika jumlah pembayaran valid dan lebih kecil atau sama dengan hutang
         debt.amount -= paymentAmount;
         debt.amount = debt.amount < 0 ? 0 : debt.amount; // Pastikan hutang tidak negatif
-    }
 
-    // Menambahkan riwayat pembayaran
-    debt.payments.push({
-        date: new Date().toLocaleString(),
-        paid: paymentAmount,
-        after: debt.amount
-    });
+        // Menyimpan riwayat pembayaran biasa
+        debt.payments.push({
+            date: new Date().toLocaleString(),
+            paid: paymentAmount,  // Jumlah yang dibayar
+            after: debt.amount  // Jumlah hutang setelah pembayaran
+        });
+    }
 
     // Menyimpan data hutang yang diperbarui ke localStorage
     localStorage.setItem('debts', JSON.stringify(debts));
-    displayDebts(); // Update tampilan
+
+    // Update tampilan
+    displayDebts();
+
+    // Cek apakah ada pencarian yang sedang aktif (input pencarian tidak kosong)
+    let searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (searchQuery) {
+        // Jika ada pencarian, pastikan untuk memanggil kembali fungsi pencarian
+        searchDebts();
+    } else {
+        // Jika tidak ada pencarian, scroll halaman ke posisi terakhir dilihat
+        const lastSeenElement = document.querySelector('.last-seen');
+        if (lastSeenElement) {
+            lastSeenElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
 }
 
 function deletePayment(index, paymentIndex) {
@@ -859,7 +879,6 @@ function toggleDebtForm(index) {
     }
 }
 
-// Fungsi untuk mengonfirmasi penambahan hutang
 function confirmDebtAddition(index) {
     const additionalDebtAmount = parseFloat(document.getElementById(`additionalDebtAmount${index}`).value);
     const debt = debts[index];
@@ -881,15 +900,31 @@ function confirmDebtAddition(index) {
 
     // Kosongkan input setelah penambahan
     document.getElementById(`additionalDebtAmount${index}`).value = '';
+
     // Sembunyikan form setelah konfirmasi
     toggleDebtForm(index);
+
+    // Cek apakah ada pencarian yang sedang aktif (input pencarian tidak kosong)
+    let searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (searchQuery) {
+        // Jika ada pencarian, pastikan untuk memanggil kembali fungsi pencarian
+        searchDebts();
+    } else {
+        // Jika tidak ada pencarian, scroll halaman ke posisi terakhir dilihat
+        const lastSeenElement = document.querySelector('.last-seen');
+        if (lastSeenElement) {
+            lastSeenElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
 }
     
-// Fungsi untuk melakukan backup data hutang
+// Fungsi untuk membackup data hutang, pembayaran, dan kembalian
 function backupData() {
     const backupText = debts.map(debt => {
         return `${debt.customerName} (${debt.customerPhone}) - Hutang: Rp ${debt.amount.toLocaleString()}\nPembayaran:\n` +
-            debt.payments.map(payment => `- Rp ${payment.paid.toLocaleString()} (${payment.date})`).join('\n') + '';
+            debt.payments.map(payment => `- Rp ${payment.paid.toLocaleString()} (${payment.date})`).join('\n') +
+            (debt.returnAmount !== undefined && debt.returnAmount > 0 ? `Kembalian: Rp ${debt.returnAmount.toLocaleString()}` : '') + // Menambahkan data kembalian jika ada
+            '\n'; // Menambahkan baris baru setelah setiap data hutang
     }).join('\n');
 
     // Tampilkan hasil backup di dalam textarea
@@ -897,24 +932,20 @@ function backupData() {
     backupTextarea.style.display = 'block'; // Menampilkan textarea
     backupTextarea.textContent = backupText; // Mengisi textarea dengan data backup
 
+    // Salin data backup ke clipboard
+    navigator.clipboard.writeText(backupText).then(() => {
+        console.log('Data backup berhasil disalin ke clipboard');
+    }).catch(err => {
+        console.error('Gagal menyalin data ke clipboard: ', err);
+    });
 }
-    
+ 
         // Fungsi untuk menghapus semua riwayat pembayaran
 function deleteAllPayments() {
     debts.forEach(debt => {
         // Hapus hanya riwayat pembayaran tanpa mengubah jumlah hutang
         debt.payments = [];
     });
-
-    // Fungsi untuk backup data
-    function backupData() {
-            const backupText = debts.map(debt => {
-                return `${debt.customerName} (${debt.customerPhone}) - Hutang: Rp ${debt.amount.toLocaleString()}\nPembayaran:\n` +
-                    debt.payments.map(payment => `  - Rp ${payment.amount.toLocaleString()} (${payment.date})`).join('\n') + '\n\n';
-            }).join('\n');
-
-            document.getElementById('backupTextarea').value = backupText;
-        }
 
     // Simpan perubahan ke localStorage
     localStorage.setItem('debts', JSON.stringify(debts));
