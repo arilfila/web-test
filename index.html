@@ -449,6 +449,19 @@
 #searchButton:hover {
     background-color: #45a049;
 }
+#filterDebtButton {
+    background-color: #808680;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 10px;
+}
+
+#filterDebtButton:hover {
+    background-color: #4e524e;
+}
 #checkDebtButton {
     background-color: #42c41b;
             color: white;
@@ -472,10 +485,9 @@
         <form id="searchForm">
             <input type="text" id="searchInput" placeholder="Cari Nama Pelanggan">
             <button type="button" id="searchButton" onclick="searchDebts()">Cari</button>
-        </form> 
-        
-        <!-- Tombol untuk memfilter hutang yang lebih besar dari 0 -->
-<button type="button" id="filterDebtButton" onclick="filterDebts()">Filter Hutang</button>
+                    <!-- Tombol untuk memfilter hutang yang lebih besar dari 0 -->
+<button type="button" id="filterDebtButton" onclick="filterDebts()">Filter Data Berhutang</button>
+        </form>       
 
         <div class="total-debt">
             <p>Total Hutang: Rp <span id="totalDebtAmount">0</span></p>
@@ -600,7 +612,7 @@ function displayDebts(filterZeroDebt = false, searchQuery = '') {
                         </div>
                         <hr />
                     `;
-                }).join('') : '<p>Tidak ada penambahan hutang.</p>'}
+                }).join('') : '<p></p>'}
             </div>
         
             ${debt.amount <= 0 ? `<button class="delete-lunas-button" onclick="removeCustomerData(${index})">Hapus Data</button>` : ''}
