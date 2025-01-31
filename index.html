@@ -1,1147 +1,436 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pencatatan Hutang Pelanggan</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #8b8181c4;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        input, button {
-            padding: 10px;
-            margin: 5px;
-            width: 100%;
-            box-sizing: border-box;
-            border-radius: 4px;
-            border: 1px solid #cccccc;
-        }
-        .debt-list {
-            margin-top: 20px;
-        }
-        .debt-item {
-            background-color: #daccb9ce;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .delete-lunas-button {
-    background-color: #000000; /* Warna hijau untuk tombol bayar */
-    color: white; /* Teks berwarna putih */
-    padding: 10px 5px; /* Padding dalam tombol */
-    border: none; /* Menghapus border default */
-    border-radius: 5px; /* Sudut tombol yang melengkung */
-    font-size: 16px; /* Ukuran font */
-    cursor: pointer; /* Menunjukkan bahwa tombol dapat diklik */
-    margin-top: 10px; /* Jarak atas tombol */
-}
-
-.delete-lunas-button:hover {
-    background-color: #635f60; /* Warna lebih gelap saat hover */
-}
-        
-        /* Gaya untuk tombol Pay */
-.pay-button {
-    background-color: #ec3636; /* Warna hijau untuk tombol bayar */
-    color: white; /* Teks berwarna putih */
-    padding: 10px 5px; /* Padding dalam tombol */
-    border: none; /* Menghapus border default */
-    border-radius: 5px; /* Sudut tombol yang melengkung */
-    font-size: 16px; /* Ukuran font */
-    cursor: pointer; /* Menunjukkan bahwa tombol dapat diklik */
-    margin-top: 10px; /* Jarak atas tombol */
-}
-
-.pay-button:hover {
-    background-color: #b32940; /* Warna lebih gelap saat hover */
-}
-
-/* Gaya untuk tombol Add Debt */
-.add-debt-button {
-    background-color: #ec3636; /* Warna biru untuk tombol tambah hutang */
-    color: white; /* Teks berwarna putih */
-    padding: 10px 20px; /* Padding dalam tombol */
-    border: none; /* Menghapus border default */
-    border-radius: 5px; /* Sudut tombol yang melengkung */
-    font-size: 16px; /* Ukuran font */
-    cursor: pointer; /* Menunjukkan bahwa tombol dapat diklik */
-    margin-top: 10px; /* Jarak atas tombol */
-}
-
-.add-debt-button:hover {
-    background-color: #b32940; /* Warna lebih gelap saat hover */
-}
-
-        .debt-item p {
-            margin: 0;
-            flex: 1;
-            text-align: left;
-        }
-        .payment-form {
-            display: flex;
-            margin-top: 10px;
-            justify-content: space-between;
-            width: 100%;
-        }
-        .payment-form input {
-            width: 70%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-        .payment-form button {
-            width: auto;
-            padding: auto;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .payment-form button:hover {
-            background-color: #45a049;
-        }
-        .debt-amount {
-    font-weight: bold;
-    color: #fffb00;
-    font-size: 18px;
-    text-shadow: 1px 1px 2px black, -1px -1px 2px black; /* Garis tepi dengan bayangan */
-}
-        .payment-history {
-            margin-top: 10px;
-            padding: 5px;
-            background-color: #f0f0f0;
-            border-radius: 4px;
-            width: 100%;
-        }
-        .payment-history span {
-            display: block;
-        }
-
-        /* Tombol Hapus untuk setiap riwayat pembayaran */
-.delete-payment {
-    background-color: transparent; /* Background transparan */
-    border: 1px solid #ccc; /* Border abu-abu tipis */
-    color: #999; /* Warna teks abu-abu */
-    font-size: 12px; /* Ukuran font kecil */
-    padding: 5px 10px; /* Padding kecil */
-    cursor: pointer; /* Menampilkan kursor pointer */
-    border-radius: 5px; /* Sudut tombol melengkung */
-    transition: all 0.3s ease; /* Transisi animasi */
-}
-
-/* Efek hover untuk tombol Hapus */
-.delete-payment:hover {
-    background-color: #f44336; /* Warna latar belakang merah saat hover */
-    color: white; /* Ubah warna teks menjadi putih */
-    border-color: #f44336; /* Ubah border menjadi merah */
-}
-
-/* Tombol Hapus saat ditekan */
-.delete-payment:active {
-    transform: scale(0.95); /* Menurunkan ukuran tombol sedikit saat ditekan */
-}
-
-/* Tombol Hapus disabled (jika diinginkan) */
-.delete-payment:disabled {
-    background-color: #f0f0f0; /* Latar belakang tombol disabled */
-    border-color: #ddd; /* Border tombol disabled */
-    color: #bbb; /* Warna teks tombol disabled */
-    cursor: not-allowed; /* Menunjukkan tombol tidak bisa ditekan */
-}
-
-        .debt-lunas {
-            color: green;
-            font-weight: bold;
-        }
-        .payment-history div {
-            margin-bottom: 10px;
-        }
-        .payment-history hr {
-            border: 1px solid #ccc;
-            margin: 10px 0;
-        }
-        .tagih-button {
-            background-color: #4caf50 !important;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .tagih-button:hover {
-            background-color: #128c7e !important;
-        }
-        .total-debt {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .delete-all-payments-button {
-            background-color: #fbff00;
-            color: rgb(0, 0, 0);
-            padding: 8px 15px;
-            border: none;
-            cursor: pointer;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .delete-all-payments-button:hover {
-            background-color: #e2e600;
-        }
-
-.debt-item {
-    background-color: #e9e9e9be;
-    padding: 15px;
-    margin: 15px 0;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    position: relative; /* Menjaga tombol tetap di dalam konteks item */
-}
-
-/* Gaya untuk tombol Edit */
-.edit-button {
-    background-color: #fbff00; /* Warna tombol */
-    color: rgb(0, 0, 0);
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 14px;
-    margin-left:5px; /* Jarak dari nama pelanggan */
-}
-
-.edit-button:hover {
-    background-color: #ced100; /* Efek hover */
-}
-
-/* Styling untuk tombol backup */
-.backup-button {
-            background-color: #21bbeb;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        .backup-button:hover {
-            background-color: #1b9fc7;
-        }
-
-        /* Styling untuk textarea backup */
-        #backupTextarea {
-            white-space: pre-wrap;
-            font-family: monospace;
-            overflow-x: auto;
-            height: auto;
-        }
-        /* Tombol Kembalian */
-        .return-button {
-    background-color: #ec3636; /* Warna hijau untuk tombol bayar */
-    color: white; /* Teks berwarna putih */
-    padding: 10px 5px; /* Padding dalam tombol */
-    border: none; /* Menghapus border default */
-    border-radius: 5px; /* Sudut tombol yang melengkung */
-    font-size: 16px; /* Ukuran font */
-    cursor: pointer; /* Menunjukkan bahwa tombol dapat diklik */
-    margin-top: 10px; /* Jarak atas tombol */
-}
-
-.return-button:hover {
-    background-color: #c22d2d; /* Warna lebih gelap saat hover */
-}
-/* Formulir Kembalian */
-.return-form {
-    margin-top: px;
-    background-color: #f9f9f9; /* Warna latar belakang form kembalian */
-    padding: 5px;
-    border-radius: 15px;
-    border: 1px solid #ddd; /* Garis border ringan */
-    display: none; /* Awalnya disembunyikan */
-}
-
-/* Input untuk nominal kembalian */
-.return-form input {
-    width: 98%;
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box; /* Agar padding tidak mempengaruhi lebar input */
-}
-
-/* Tombol Hitung Kembalian */
-.confirm-return {
-    background-color: #28a745; /* Warna hijau untuk tombol konfirmasi */
-    color: white;
-    width: 98%;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    display: inline-block;
-}
-
-.confirm-return:hover {
-    background-color: #218838; /* Warna hijau lebih gelap saat hover */
-}
-
-.return-amount-display {
-    margin-top: 10px;
-    font-weight: bold;
-    color: #ff0000;
-    font-size: 18px;
-    text-align: center;
-    display: block;
-    width: 100%;
-    font-family: 'Edu+AU+VIC+WA+NT+Hand', sans-serif; /* Menggunakan Poppins */
-}
-
-/* Jika kembalian sudah dihitung */
-.return-form p {
-    font-size: 16px;
-    font-weight: bold;
-    color: #28a745; /* Menunjukkan kembalian dengan warna hijau */
-    margin-top: 10px;
-}
-.clickable-text {
-    color: blue;
-    text-decoration: underline;
-    cursor: pointer;
-}
-/* Mengatur ukuran font untuk teks riwayat pembayaran */
-.payment-record p {
-    font-size: 12px; /* Ukuran font lebih kecil */
-    color: #555; /* Warna teks abu-abu gelap untuk kontras yang lebih baik */
-    margin: 5px 0; /* Memberikan jarak antar elemen <p> agar lebih rapih */
-}
-
-/* Mengatur teks jumlah pembayaran agar lebih mencolok (optional) */
-.payment-record p:first-child {
-    font-weight: bold; /* Menebalkan teks untuk "Jumlah Pembayaran" */
-    color: #333; /* Warna teks lebih gelap untuk menarik perhatian */
-}
-/* Gaya untuk form secara keseluruhan */
-#debtForm {
-        width: 90%; /* Gunakan 90% dari lebar layar */
-        max-width: 400px; /* Maksimal lebar form adalah 400px */
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #f4f4f4;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        box-sizing: border-box; /* Memastikan padding dihitung dalam lebar total */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Kategori dan Produk</title>
+  <style>
+    /* Resetting some basic styles */
+    body, h1, label, select, input, button {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
     }
 
-    /* Gaya untuk input text dan number */
-    #debtForm input {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-sizing: border-box;
-        font-size: 16px;
+    body {
+      background: linear-gradient(135deg, #3e2a47, #5a3f8d); /* Gradasi warna ungu gelap ke ungu muda */
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    #debtForm button {
-    background-color: #68e203; /* Warna latar belakang hijau */
-    color: rgb(255, 255, 255); /* Warna teks putih */
-    border: none; /* Menghilangkan border default */
-    padding: auto; /* Padding untuk memberikan ruang di dalam tombol */
-    text-align: center; /* Menyelaraskan teks ke tengah */
-    text-decoration: none; /* Menghilangkan dekorasi teks */
-    display: inline-block; /* Membuat tombol tampil dalam baris */
-    font-size: 16px; /* Ukuran font */
-    margin: 2px 5px; /* Margin antara tombol */
-    border-radius: 8px; /* Membulatkan sudut tombol */
-    cursor: pointer; /* Mengubah kursor menjadi pointer saat hover */
-    transition: all 0.3s ease; /* Efek transisi saat interaksi */
-}
 
-#debtForm button:hover {
-    background-color: #7bbd00; /* Warna latar belakang sedikit lebih gelap saat hover */
-    transform: translateY(-2px); /* Efek angkat sedikit saat hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Menambahkan bayangan untuk efek 3D */
-}
+    .container {
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 480px;
+      width: 100%;
+      padding: 30px;
+      box-sizing: border-box;
+      background: #fff;
+      border: 1px solid #f0d130; /* Warna emas untuk border */
+    }
 
-#debtForm button:active {
-    background-color: #7bbd00; /* Warna latar belakang lebih gelap saat tombol diklik */
-    transform: translateY(0); /* Menghilangkan efek angkat saat tombol diklik */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Bayangan lebih ringan saat klik */
-}
+    h1 {
+      text-align: center;
+      color: #5a3f8d;
+      font-size: 28px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
 
-    /* Media Query untuk perangkat yang lebih kecil, seperti smartphone */
+    label {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    select, input[type="text"], button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      background-color: #fafafa;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    select:focus, input[type="text"]:focus, button:focus {
+      border-color: #5a3f8d; /* Warna ungu muda pada border saat fokus */
+      outline: none;
+    }
+
+    .product-list {
+      display: none;
+    }
+
+    .button-container {
+      text-align: center;
+    }
+
+    .product-list select {
+      width: 100%;
+    }
+
+    button {
+      background-color: #5a3f8d; /* Warna ungu muda untuk tombol */
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 6px;
+      padding: 15px;
+    }
+
+    button:hover {
+      background-color: #3e2a47; /* Warna ungu gelap saat hover */
+    }
+
+    /* Style untuk mobile responsiveness */
     @media (max-width: 600px) {
-        #debtForm {
-            width: 95%; /* Gunakan 95% dari lebar layar pada perangkat kecil */
-        }
-
-        #debtForm input,
-        #debtForm button {
-            font-size: 14px; /* Mengurangi ukuran font pada layar kecil untuk kenyamanan */
-        }
+      .container {
+        padding: 20px;
+      }
+      select, input[type="text"], button {
+        padding: 10px;
+      }
     }
-    .button-cari {
-    background-color: #4CAF50; /* Warna latar belakang hijau */
-    color: white; /* Warna teks putih */
-    border: none; /* Menghilangkan border default */
-    padding: auto; /* Padding untuk memberikan ruang di dalam tombol */
-    text-align: center; /* Menyelaraskan teks ke tengah */
-    text-decoration: none; /* Menghilangkan dekorasi teks */
-    display: inline-block; /* Membuat tombol tampil dalam baris */
-    font-size: 16px; /* Ukuran font */
-    margin: 2px 5px; /* Margin antara tombol */
-    border-radius: 8px; /* Membulatkan sudut tombol */
-    cursor: pointer; /* Mengubah kursor menjadi pointer saat hover */
-    transition: all 0.3s ease; /* Efek transisi saat interaksi */
-}
 
-.button-cari:hover {
-    background-color: #45a049; /* Warna latar belakang sedikit lebih gelap saat hover */
-    transform: translateY(-2px); /* Efek angkat sedikit saat hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Menambahkan bayangan untuk efek 3D */
-}
+    /* Style khusus untuk keterangan provider tanpa background */
+    .provider-info {
+      font-size: 16px;
+      color: red; /* Menggunakan warna merah untuk teks */
+      margin-top: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
 
-.button-cari:active {
-    background-color: #388e3c; /* Warna latar belakang lebih gelap saat tombol diklik */
-    transform: translateY(0); /* Menghilangkan efek angkat saat tombol diklik */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Bayangan lebih ringan saat klik */
-}
-#searchButton {
-    background-color: #42c41b;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-top: 10px;
-}
+    /* Menambahkan spacing agar elemen lebih rapi dan simetris */
+    .form-group {
+      margin-bottom: 15px; /* Jarak antar elemen lebih rapi */
+    }
 
-#searchButton:hover {
-    background-color: #45a049;
-}
-#filterDebtButton {
-    background-color: #808680;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-top: 10px;
-}
-
-#filterDebtButton:hover {
-    background-color: #4e524e;
-}
-#checkDebtButton {
-    background-color: #42c41b;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-top: 10px;
-}
-
-#checkDebtButton:hover {
-    background-color: #45a049;
-}
-    </style>
+    /* Membuat tombol beli lebih besar dan simetris */
+    .button-container button {
+      padding: 15px;
+      font-size: 18px;
+      width: 100%;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>SAERAH CELL</h1>
+  <div class="container">
+    <h1>Menu Pilih Kategori dan Produk</h1>
 
-        <form id="searchForm">
-            <input type="text" id="searchInput" placeholder="Cari Nama Pelanggan">
-            <button type="button" id="searchButton" onclick="searchDebts()">Cari</button>
-                    <!-- Tombol untuk memfilter hutang yang lebih besar dari 0 -->
-<button type="button" id="filterDebtButton" onclick="filterDebts()">Filter Data Berhutang</button>
-        </form>       
-
-        <div class="total-debt">
-            <p>Total Hutang: Rp <span id="totalDebtAmount">0</span></p>
-            <p>Pembayaran: Rp <span id="totalPaymentsAmount" class="clickable-text">0</span></p>
-        </div>  
-
-            <!-- Tempat untuk menampilkan pelanggan dengan pembayaran lebih dari 0 -->
-        <div id="paymentCustomersList" style="display: none;">
-            <h3>Pelanggan dengan Pembayaran</h3>
-            <ul id="paymentCustomers"></ul> <!-- Daftar pelanggan dengan pembayaran lebih dari 0 -->
-        </div> 
-
-        <div class="total-debt">
-            <p>
-                Kembalian: Rp <span id="totalReturnAmount" class="clickable-text">0</span>
-            </p>
-        </div>
-        
-        <!-- Tempat untuk menampilkan pelanggan dengan kembalian lebih dari 0 -->
-        <div id="returnCustomersList" style="display: none;">
-            <h3>Pelanggan dengan Kembalian</h3>
-            <ul id="returnCustomers"></ul> <!-- Daftar pelanggan dengan kembalian lebih dari 0 -->
-        </div>
-        
-        
-        <button class="delete-all-payments-button" onclick="deleteAllPayments()">Hapus Semua Riwayat Pembayaran</button>
-        <button class="backup-button" onclick="backupData()">Backup Data Hutang</button>
-        <!-- Tambahkan tombol untuk menyalin di bawah textarea -->
-<button id="copyBackupButton" class="backup-button" style="display: none;" onclick="copyBackupData()">Salin Data</button>
-<pre id="backupTextarea" style="margin-top: 5px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc; display: none;"></pre>
-
-        <form id="debtForm">
-            <input type="text" id="customerName" placeholder="Nama Pelanggan" required>
-            <input type="text" id="customerPhone" placeholder="Nomor HP (Mulai dengan 62)" required oninput="sanitizePhoneInput(event)">
-            <input type="number" id="debtAmount" placeholder="Jumlah Hutang" required>
-            <button type="submit">Tambah Hutang</button>
-        </form>
-    
-        <div class="debt-list" id="debtList">
-            <h2>Daftar Hutang</h2>
-            <!-- Daftar hutang akan muncul di sini -->
-        </div>
-
+    <!-- Kolom input untuk nomor telepon dipindahkan ke atas -->
+    <div class="form-group">
+      <label for="phone">Nomor Telepon:</label>
+      <input type="text" id="phone" placeholder="Masukkan nomor telepon Anda" oninput="checkPhoneProvider()" />
+      <div id="provider-info" class="provider-info"></div>
     </div>
-    
-    <script>
-        // Ambil data hutang yang disimpan di localStorage
-        let debts = JSON.parse(localStorage.getItem('debts')) || [];
-        let searchQuery = ''; // Variabel pencarian global
-        
-// Fungsi untuk menampilkan daftar hutang
-function displayDebts(filterZeroDebt = false, searchQuery = '') {
-    const debtList = document.getElementById('debtList');
-    debtList.innerHTML = '<h2>Daftar Hutang</h2>'; // Reset konten
 
-    let totalDebt = 0;
-    let totalPayments = 0;
-    let totalReturn = 0;  // Variabel untuk menghitung total kembalian
+    <!-- Dropdown untuk memilih kategori -->
+    <div class="form-group">
+      <label for="category">Pilih Kategori:</label>
+      <select id="category" onchange="updateSubCategory()">
+        <option value="">-- Pilih Kategori --</option>
+        <option value="pulsa">Pulsa</option>
+        <option value="kuota">Kuota</option>
+        <option value="perabot">Perabot Rumah</option>
+      </select>
+    </div>
 
-    // Filter hutang yang lebih dari 0 jika filterZeroDebt bernilai true
-    const filteredDebts = debts.filter(debt => {
-        const matchesQuery = debt.customerName.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesDebtFilter = !filterZeroDebt || debt.amount > 0;
-        return matchesQuery && matchesDebtFilter;
-    });
+    <!-- Dropdown untuk memilih provider pulsa -->
+    <div id="provider-container" class="product-list form-group" style="display: none;">
+      <label for="provider">Pilih Provider Pulsa:</label>
+      <select id="provider" onchange="updateProducts()">
+        <option value="">-- Pilih Provider --</option>
+        <!-- Provider akan diisi dengan JavaScript -->
+      </select>
+    </div>
 
-    filteredDebts.forEach((debt, index) => {
-        const debtItem = document.createElement('div');
-        debtItem.classList.add('debt-item');
-        debtItem.dataset.index = index; // Menambahkan index unik
-        debtItem.id = `debt-item-${index}`;  // Menambahkan ID unik untuk setiap item
-        debtItem.innerHTML = `
-            <div style="display: flex; align-items: center;">
-                <p>
-                    <strong> ${index + 1}</strong><br> <!-- Menambahkan Index -->
-                    ${debt.customerName} <br> ${debt.customerPhone} <br> 
-                    <span class="debt-amount">Rp ${debt.amount.toLocaleString()}</span>
-                    ${debt.amount <= 0 ? '<br><span class="debt-lunas">Hutang Lunas</span>' : ''}
-                </p>
-                <button class="edit-button" onclick="editCustomerData(${index})">Edit</button> <!-- Tombol Edit -->
-            </div>
-            ${debt.amount > 0 ? ` 
-                <button class="pay-button" onclick="togglePaymentForm(${index})">Bayar</button>
-                <div id="paymentForm${index}" class="payment-form" style="display: none;">
-                    <input type="number" id="paymentAmount${index}" placeholder="Jumlah Pembayaran" />
-                    <button class="confirm-payment" onclick="confirmPayment(${index})">Konfirmasi Pembayaran</button>
-                </div>
-            ` : ''}
+    <!-- Dropdown untuk memilih produk berdasarkan provider pulsa -->
+    <div id="product-container" class="product-list form-group" style="display: none;">
+      <label for="product">Pilih Produk:</label>
+      <select id="product">
+        <option value="">-- Pilih Produk --</option>
+        <!-- Produk akan diisi dengan JavaScript -->
+      </select>
+    </div>
 
-            <button class="add-debt-button" onclick="toggleDebtForm(${index})">Tambah Hutang</button>
-            <div id="debtForm${index}" class="payment-form" style="display: none;">
-                <input type="number" id="additionalDebtAmount${index}" placeholder="Jumlah Hutang Tambahan" />
-                <button class="confirm-payment" onclick="confirmDebtAddition(${index})">Konfirmasi Tambah Hutang</button>
-            </div>
+    <!-- Tombol untuk beli -->
+    <div class="button-container">
+      <button onclick="purchaseProduct()">Beli</button>
+    </div>
+  </div>
 
-            <!-- Riwayat Pembayaran -->
-            <div class="payment-history">
-                ${debt.payments.length > 0 ? `<h4>Riwayat Pembayaran</h4>` : ''}
-                ${debt.payments.map((payment, paymentIndex) => {
-                    return `
-                        <div class="payment-record">
-                            <p>Jumlah Pembayaran: Rp ${payment.paid.toLocaleString()}</p>
-                            <p>Tanggal: ${payment.date}</p>
-                            <p>Setelah Pembayaran: Rp ${payment.after.toLocaleString()}</p>
-                            <button class="delete-payment" onclick="deletePayment(${index}, ${paymentIndex})">Hapus</button>
-                        </div>
-                        <hr />
-                    `;
-                }).join('')}
-            </div>
+  <script>
+    // Data produk dengan subkategori provider
+    const products = {
+      pulsa: {
+        indosat: [
+        { name: 'Indosat 5000', code: 'indosat5' },
+{ name: 'Indosat 10000', code: 'indosat10' },
+{ name: 'Indosat 15000', code: 'int15' },
+{ name: 'Indosat 20000', code: 'int20' },
+{ name: 'Indosat 25000', code: 'indosat25' },
+{ name: 'Indosat 30000', code: 'int30' },
+{ name: 'Indosat 35000', code: 'indosat35' },
+{ name: 'Indosat 40000', code: 'indosat40' },
+{ name: 'Indosat 50000', code: 'indosat50' },
+{ name: 'Indosat 60000', code: 'indosat60' },
+{ name: 'Indosat 70000', code: 'indosat70' },
+{ name: 'Indosat 80000', code: 'indosat80' },
+{ name: 'Indosat 90000', code: 'indosat90' },
+{ name: 'Indosat 100000', code: 'indosat100' }
+        ],
+        telkomsel: [
+        { name: 'Telkomsel 5000', code: 'telkomsel5' },
+{ name: 'Telkomsel 10000', code: 'telkomsel10' },
+{ name: 'Telkomsel 15000', code: 'telkomsel15' },
+{ name: 'Telkomsel 20000', code: 'telkomsel20' },
+{ name: 'Telkomsel 25000', code: 'telkomsel25' },
+{ name: 'Telkomsel 30000', code: 'telkomsel30' },
+{ name: 'Telkomsel 35000', code: 'telkomsel35' },
+{ name: 'Telkomsel 40000', code: 'telkomsel40' },
+{ name: 'Telkomsel 45000', code: 'telkomsel45' },
+{ name: 'Telkomsel 50000', code: 'telkomsel50' },
+{ name: 'Telkomsel 55000', code: 'telkomsel55' },
+{ name: 'Telkomsel 60000', code: 'telkomsel60' },
+{ name: 'Telkomsel 65000', code: 'telkomsel65' },
+{ name: 'Telkomsel 70000', code: 'telkomsel70' },
+{ name: 'Telkomsel 75000', code: 'telkomsel75' },
+{ name: 'Telkomsel 80000', code: 'telkomsel80' },
+{ name: 'Telkomsel 85000', code: 'telkomsel85' },
+{ name: 'Telkomsel 90000', code: 'telkomsel90' },
+{ name: 'Telkomsel 95000', code: 'telkomsel95' },
+{ name: 'Telkomsel 100000', code: 'telkomsel100' }
 
-            <!-- Riwayat Penambahan Hutang -->
-            <div class="payment-history">
-                ${debt.debtAdditions && debt.debtAdditions.length > 0 ? `<h4>Riwayat Penambahan Hutang</h4>` : ''}
-                ${debt.debtAdditions ? debt.debtAdditions.map((addition, additionIndex) => {
-                    return `
-                        <div class="payment-record">
-                            <p>Jumlah Penambahan: Rp ${addition.added.toLocaleString()}</p>
-                            <p>Tanggal Penambahan: ${addition.date}</p>
-                            <p>Setelah Penambahan: Rp ${addition.after.toLocaleString()}</p>
-                            <button class="delete-payment" onclick="deleteDebtAddition(${index}, ${additionIndex})">Hapus</button>
-                        </div>
-                        <hr />
-                    `;
-                }).join('') : '<p></p>'}
-            </div>
-        
-            ${debt.amount <= 0 ? `<button class="delete-lunas-button" onclick="removeCustomerData(${index})">Hapus Data</button>` : ''}
-            ${debt.amount > 0 ? `<button class="tagih-button" onclick="tagihCustomer(${index})">Tagih via WhatsApp</button>` : ''}
+        ],
+        xl: [
+        { name: 'XL 5000', code: 'xl5' },
+{ name: 'XL 10000', code: 'xl10' },
+{ name: 'XL 15000', code: 'xl15' },
+{ name: 'XL 20000', code: 'xl20' },
+{ name: 'XL 25000', code: 'xl25' },
+{ name: 'XL 30000', code: 'xl30' },
+{ name: 'XL 40000', code: 'xl40' },
+{ name: 'XL 50000', code: 'xl50' },
+{ name: 'XL 60000', code: 'xl60' },
+{ name: 'XL 70000', code: 'xl70' },
+{ name: 'XL 80000', code: 'xl80' },
+{ name: 'XL 90000', code: 'xl90' },
+{ name: 'XL 100000', code: 'xl100' }
+        ],
+        axis: [
+        { name: 'axis 5000', code: 'ax5' },
+{ name: 'axis 10000', code: 'ax10' },
+{ name: 'axis 15000', code: 'ax15' },
+{ name: 'axis 20000', code: 'ax20' },
+{ name: 'axis 25000', code: 'ax25' },
+{ name: 'axis 30000', code: 'ax30' },
+{ name: 'axis 40000', code: 'ax40' },
+{ name: 'axis 50000', code: 'ax50' },
+{ name: 'axis 60000', code: 'ax60' },
+{ name: 'axis 70000', code: 'ax70' },
+{ name: 'axis 80000', code: 'ax80' },
+{ name: 'axis 90000', code: 'ax90' },
+{ name: 'axis 100000', code: 'ax100' }
 
-            <!-- Tombol Kembalian -->
-            <button class="return-button" onclick="showReturnForm(${index})">Kembalian</button>
-            ${debt.returnAmount !== undefined ? `<p class="return-amount-display">Kembalian: Rp ${debt.returnAmount.toLocaleString()}</p>` : ''}
-            <div id="returnForm${index}" class="return-form" style="display: none;">
-                <input type="number" id="returnAmount${index}" placeholder="Masukkan Pembayaran" />
-                <button class="confirm-return" onclick="processReturn(${index})">Hitung Kembalian</button>
-            </div>
-        `;
+        ],
+        Three: [
+        { name: 'three 5000', code: 'tri5' },
+{ name: 'three 10000', code: 'tri10' },
+{ name: 'three 15000', code: 'trit15' },
+{ name: 'three 20000', code: 'trit20' },
+{ name: 'three 25000', code: 'trit25' },
+{ name: 'three 30000', code: 'tri30' },
+{ name: 'three 40000', code: 'trit40' },
+{ name: 'three 45000', code: 'tri45' },
+{ name: 'three 50000', code: 'tri50' },
+{ name: 'three 60000', code: 'tri60' },
+{ name: 'three 70000', code: 'tri70' },
+{ name: 'three 75000', code: 'tri75' },
+{ name: 'three 80000', code: 'tri80' },
+{ name: 'three 90000', code: 'tri90' },
+{ name: 'three 100000', code: 'tri100' }
 
-        debtList.appendChild(debtItem);
+        ],
+        Byu: [
+        { name: 'byu 5000', code: 'by5' },
+{ name: 'byu 10000', code: 'by10' },
+{ name: 'byu 15000', code: 'by15' },
+{ name: 'byu 20000', code: 'by20' },
+{ name: 'byu 25000', code: 'by25' },
+{ name: 'byu 30000', code: 'by30' },
+{ name: 'byu 35000', code: 'by35' },
+{ name: 'byu 40000', code: 'by40' },
+{ name: 'byu 45000', code: 'by45' },
+{ name: 'byu 50000', code: 'by50' },
+{ name: 'byu 55000', code: 'by55' },
+{ name: 'byu 60000', code: 'by60' },
+{ name: 'byu 65000', code: 'by65' },
+{ name: 'byu 70000', code: 'by70' },
+{ name: 'byu 75000', code: 'by75' },
+{ name: 'byu 80000', code: 'by80' },
+{ name: 'byu 85000', code: 'by85' },
+{ name: 'byu 90000', code: 'by90' },
+{ name: 'byu 95000', code: 'by95' },
+{ name: 'byu 100000', code: 'by100' }
 
-        // Menambahkan jumlah hutang, pembayaran, dan kembalian
-        totalDebt += debt.amount;
-        totalPayments += debt.payments.reduce((sum, payment) => sum + payment.paid, 0);
-        totalReturn += debt.returnAmount || 0;  // Menambahkan kembalian jika ada
-    });
+        ]
+      },
+      kuota: {
+        indosat: [
+          { name: '1gb 2hari', code: 'idj1' },
+          { name: '3gb 3hari', code: 'if3h3' },
+          { name: '2,5gb 5hari', code: 'idj2,5' },
+          { name: '3gb 3hari', code: 'if3h3' },
+          { name: '5gb 5hari', code: 'idj5' },
+          { name: '7gb 7hari', code: 'idj7' },
+          { name: '3gb 30hari', code: 'idfi3' },
+          { name: '7gb 30hari', code: 'idfi7' },
+          { name: '9gb 30hari', code: 'idfi9' },
+          { name: '12gb 30hari', code: 'idfi12' },
+          { name: '100gb 30hari', code: 'idfi100' }
+        ],
+        telkomsel: [
+          { name: 'paket 5000', code: 'telkomsel5' },
+          { name: 'paket 10000', code: 'telkomsel10' },
+          { name: 'Telkomsel 20000', code: 'telkomsel20' }
+        ],
+        xl: [
+          { name: 'paket 5000', code: 'xl5' },
+          { name: 'paket 10000', code: 'xl10' },
+          { name: 'paket 20000', code: 'xl20' }
+        ]
+      },
+    };
 
-    // Update total debt, total payments, dan total return values
-    document.getElementById('totalDebtAmount').innerText = totalDebt.toLocaleString();
-    document.getElementById('totalPaymentsAmount').innerText = totalPayments.toLocaleString();
-    document.getElementById('totalReturnAmount').innerText = totalReturn.toLocaleString(); // Update total kembalian
-}
+    // Daftar awalan nomor provider Indonesia
+    const phoneProviders = {
+      'telkomsel': '0852,0853,0811,0812,0813,0821,0822,0823,0851',
+      'indosat': '0855,0856,0857,0858,0814,0815,0815,0816',
+      'xl axiata': '0817,0818,0819,0859,0877,0878',
+      'axis': '0831,0832,0833,0838',
+      'tri': '0895,0896,0897,0898,0899',
+      'smartfren': '0881,0882,0883,0884,0885,0886,0887,0888,0889'
+    };
 
+    // Fungsi untuk memperbarui subkategori (provider) berdasarkan kategori yang dipilih
+    function updateSubCategory() {
+      const category = document.getElementById('category').value;
+      const providerContainer = document.getElementById('provider-container');
+      const productContainer = document.getElementById('product-container');
+      const providerSelect = document.getElementById('provider');
+      
+      // Reset pilihan
+      providerSelect.innerHTML = '<option value="">-- Pilih Provider --</option>';
+      productContainer.style.display = 'none';
+      providerContainer.style.display = 'none';
 
-function filterDebts() {
-    // Ambil semua elemen debt-item
-    const debtItems = Array.from(document.getElementsByClassName('debt-item'));
-
-    // Filter debt-item berdasarkan nilai hutang yang lebih dari 0
-    const filteredDebtItems = debtItems.filter(debtItem => {
-        // Ambil nilai hutang dari elemen (misalnya, mencari teks atau atribut data)
-        const debtAmountText = debtItem.querySelector('.debt-amount').innerText; // Misalnya, elemen dengan kelas .debt-amount
-        const debtAmount = parseFloat(debtAmountText.replace(/[^0-9.-]+/g, "")); // Mengambil nilai hutang dan mengonversinya ke angka
-
-        return debtAmount > 0; // Menyaring yang nilai hutangnya lebih besar dari 0
-    });
-
-    // Sembunyikan semua debt-item terlebih dahulu
-    debtItems.forEach(debtItem => {
-        debtItem.style.display = 'none';
-    });
-
-    // Tampilkan hanya debt-item yang memiliki hutang lebih dari 0
-    filteredDebtItems.forEach(debtItem => {
-        debtItem.style.display = 'block';
-    });
-
-    // Jika ada hasil pencarian, scroll ke elemen pertama yang ditemukan
-    if (filteredDebtItems.length > 0) {
-        filteredDebtItems[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}
-
-// Fungsi untuk menghapus data customer berdasarkan index
-function removeCustomerData(index) {
-    // Ambil data customer dari localStorage
-    let debts = JSON.parse(localStorage.getItem('debts')) || [];
-
-    // Periksa apakah data yang ada pada index yang dimaksud ada
-    if (index >= 0 && index < debts.length) {
-        // Hapus data dari array debts
-        debts.splice(index, 1);
-
-        // Simpan kembali data yang telah diperbarui ke localStorage
-        localStorage.setItem('debts', JSON.stringify(debts));
-
-        // Ambil semua elemen debt-item berdasarkan kelas
-        const debtItems = document.getElementsByClassName('debt-item');
-
-        // Hapus elemen debt-item yang sesuai dengan index
-        if (debtItems[index]) {
-            debtItems[index].remove();
-        }
-
-        // Menampilkan pesan konfirmasi
-        alert("Data customer berhasil dihapus!");
-    } else {
-        alert("Data tidak ditemukan!");
-    }
-}
-
-// Fungsi untuk menampilkan pelanggan dengan pembayaran lebih dari 0
-function viewPaymentCustomers() {
-    const paymentCustomersList = document.getElementById('paymentCustomersList');
-    
-    // Cek apakah daftar pelanggan dengan pembayaran sudah ditampilkan
-    if (paymentCustomersList.style.display === 'block') {
-        // Jika sudah ditampilkan, sembunyikan daftar
-        paymentCustomersList.style.display = 'none';
-    } else {
-        // Jika belum ditampilkan, tampilkan daftar dan perbarui kontennya
-        const paymentCustomers = document.getElementById('paymentCustomers');
-        
-        // Reset daftar pelanggan
-        paymentCustomers.innerHTML = '';
-
-        // Filter data hutang untuk mendapatkan pelanggan yang memiliki pembayaran lebih dari 0
-        const customersWithPayment = debts.filter(debt => debt.payments.reduce((sum, payment) => sum + payment.paid, 0) > 0);
-        
-        // Jika ada pelanggan dengan pembayaran, tampilkan nama dan total pembayaran mereka
-        if (customersWithPayment.length > 0) {
-            customersWithPayment.forEach(debt => {
-                const totalPaid = debt.payments.reduce((sum, payment) => sum + payment.paid, 0);
-                const listItem = document.createElement('li');
-                listItem.textContent = `${debt.customerName} - Pembayaran: Rp ${totalPaid.toLocaleString()}`; // Menampilkan nama dan total pembayaran
-                paymentCustomers.appendChild(listItem);
-            });
-            // Tampilkan daftar pelanggan
-            paymentCustomersList.style.display = 'block';
+      if (category) {
+        if (category === 'pulsa' || category === 'kuota') {
+          const providers = Object.keys(products[category]);
+          providers.forEach(function(provider) {
+            const option = document.createElement('option');
+            option.value = provider;
+            option.textContent = provider.charAt(0).toUpperCase() + provider.slice(1);
+            providerSelect.appendChild(option);
+          });
+          providerContainer.style.display = 'block';
         } else {
-            // Jika tidak ada pelanggan dengan pembayaran, tampilkan pesan
-            paymentCustomers.innerHTML = '<li>Tidak ada pelanggan dengan pembayaran.</li>';
-            paymentCustomersList.style.display = 'block';
+          // Tampilkan produk untuk kategori lainnya (perabot)
+          const categoryProducts = products[category];
+          categoryProducts.forEach(function(product) {
+            const option = document.createElement('option');
+            option.value = product.code;
+            option.textContent = product.name;
+            providerSelect.appendChild(option);
+          });
+          productContainer.style.display = 'block';
         }
+      }
     }
-}
 
-// Menambahkan event listener untuk elemen totalPaymentsAmount agar dapat diklik
-document.getElementById('totalPaymentsAmount').addEventListener('click', function() {
-    viewPaymentCustomers(); // Memanggil fungsi toggle ketika diklik
-});
+    // Fungsi untuk memeriksa provider berdasarkan nomor telepon
+    function checkPhoneProvider() {
+      const phone = document.getElementById('phone').value;
+      const providerInfo = document.getElementById('provider-info');
+      const phonePrefix = phone.substring(0, 4); // Ambil awalan 4 digit nomor
+      let providerFound = '';
 
-// Fungsi untuk menampilkan pelanggan dengan kembalian lebih dari 0
-function viewReturnCustomers() {
-    const returnCustomersList = document.getElementById('returnCustomersList');
-    
-    // Cek apakah daftar pelanggan dengan kembalian sudah ditampilkan
-    if (returnCustomersList.style.display === 'block') {
-        // Jika sudah ditampilkan, sembunyikan daftar
-        returnCustomersList.style.display = 'none';
-    } else {
-        // Jika belum ditampilkan, tampilkan daftar dan perbarui kontennya
-        const returnCustomers = document.getElementById('returnCustomers');
-        
-        // Reset daftar pelanggan
-        returnCustomers.innerHTML = '';
-
-        // Filter data hutang untuk mendapatkan pelanggan yang memiliki kembalian lebih dari 0
-        const customersWithReturn = debts.filter(debt => debt.returnAmount > 0);
-        
-        // Jika ada pelanggan dengan kembalian, tampilkan nama dan kembalian mereka
-        if (customersWithReturn.length > 0) {
-            customersWithReturn.forEach(debt => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${debt.customerName} - Kembalian: Rp ${debt.returnAmount.toLocaleString()}`; // Menampilkan nama dan kembalian
-                returnCustomers.appendChild(listItem);
-            });
-            // Tampilkan daftar pelanggan
-            returnCustomersList.style.display = 'block';
-        } else {
-            // Jika tidak ada pelanggan dengan kembalian, tampilkan pesan
-            returnCustomers.innerHTML = '<li>Tidak ada pelanggan dengan kembalian.</li>';
-            returnCustomersList.style.display = 'block';
+      // Mencari provider berdasarkan prefix
+      for (let provider in phoneProviders) {
+        const prefixes = phoneProviders[provider].split(',');
+        if (prefixes.includes(phonePrefix)) {
+          providerFound = provider;
+          break;
         }
+      }
+
+      if (providerFound) {
+        providerInfo.textContent = `Nomor ini terdaftar pada provider: ${providerFound.charAt(0).toUpperCase() + providerFound.slice(1)}`;
+      } else {
+        providerInfo.textContent = 'Provider tidak ditemukan atau nomor tidak valid.';
+      }
     }
-}
-// Fungsi untuk form kembalian
-function processReturn(index) {
-    // Simpan posisi scroll sebelumnya
-    const lastScrollPosition = window.scrollY;
 
-    const returnAmountInput = parseInt(document.getElementById(`returnAmount${index}`).value);
+    // Fungsi untuk memperbarui produk berdasarkan provider yang dipilih
+    function updateProducts() {
+      const category = document.getElementById('category').value;
+      const provider = document.getElementById('provider').value;
+      const productSelect = document.getElementById('product');
+      
+      // Reset pilihan produk
+      productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
+      
+      if (provider && category) {
+        const providerProducts = products[category][provider];
+        providerProducts.forEach(function(product) {
+          const option = document.createElement('option');
+          option.value = product.code;
+          option.textContent = product.name;
+          productSelect.appendChild(option);
+        });
+        productSelect.parentElement.style.display = 'block';
+      }
+    }
 
-    if (isNaN(returnAmountInput)) {
-        alert("Masukkan jumlah kembalian yang valid!");
+    // Fungsi untuk membeli produk
+    function purchaseProduct() {
+      const productSelect = document.getElementById('product');
+      const providerSelect = document.getElementById('provider');
+      const phoneInput = document.getElementById('phone');
+      const phone = phoneInput.value;
+      const productCode = productSelect.value;
+
+      if (!productCode || !phone) {
+        alert('Silakan pilih produk dan masukkan nomor telepon.');
         return;
+      }
+
+      const message = `buy ${productCode}.${phone}`;
+      const phoneNumber = '6289510044680';
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+      window.open(url, '_blank');
     }
 
-    const debt = debts[index];
-
-    // Jika nilai kembalian belum ada, inisialisasi
-    if (debt.returnAmount === undefined) {
-        debt.returnAmount = 0;
+    function findProductByCode(code) {
+      for (let category in products) {
+        const product = products[category].find(p => p.code === code);
+        if (product) return product;
+      }
+      return null;
     }
-
-    // Update nilai kembalian
-    debt.returnAmount += returnAmountInput;
-
-    // Simpan data hutang yang sudah diupdate ke localStorage
-    localStorage.setItem('debts', JSON.stringify(debts));
-
-    // Update tampilan daftar hutang
-    displayDebts();
-}
-
-
-// Menambahkan event listener untuk elemen totalReturnAmount agar dapat diklik
-document.getElementById('totalReturnAmount').addEventListener('click', function() {
-    viewReturnCustomers(); // Memanggil fungsi toggle ketika diklik
-});
-
-
-        function showReturnForm(index) {
-    const returnForm = document.getElementById(`returnForm${index}`);
-    
-    // Cek apakah form sudah tampil atau tidak
-    if (returnForm.style.display === 'block') {
-        // Jika sudah tampil, sembunyikan form
-        returnForm.style.display = 'none';
-    } else {
-        // Jika belum tampil, tampilkan form
-        returnForm.style.display = 'block';
-    }
-}       
-
-
-function searchDebts() {
-    // Ambil nilai input pencarian
-    let searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
-    
-    // Ambil semua elemen debt-item
-    const debtItems = Array.from(document.getElementsByClassName('debt-item'));
-
-    // Filter debt-item berdasarkan query pencarian
-    const filteredDebtItems = debtItems.filter(debtItem => {
-        const debtText = debtItem.innerText.toLowerCase();  // Mengambil teks di dalam elemen
-        return debtText.includes(searchQuery);  // Cek apakah teks mengandung query pencarian
-    });
-
-    // Sembunyikan semua debt-item terlebih dahulu
-    debtItems.forEach(debtItem => {
-        debtItem.style.display = 'none';
-    });
-
-    // Tampilkan hanya debt-item yang sudah difilter
-    filteredDebtItems.forEach(debtItem => {
-        debtItem.style.display = 'block';
-    });
-
-    // Jika ada hasil pencarian, scroll ke elemen pertama yang ditemukan
-    if (filteredDebtItems.length > 0) {
-        filteredDebtItems[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}
-// Fungsi untuk mengedit data pelanggan
-function editCustomerData(index) {
-    // Cari data pelanggan berdasarkan index yang diklik
-    const debt = debts[index];
-
-    // Tampilkan form edit
-    const newName = prompt("Edit Nama Pelanggan:", debt.customerName);
-    const newPhone = prompt("Edit Nomor HP:", debt.customerPhone);
-    const newDebtAmount = prompt("Edit Jumlah Hutang:", debt.amount);
-
-    // Validasi input
-    if (newName && newPhone && !isNaN(newDebtAmount) && newDebtAmount >= 0) {
-        // Memperbarui data pelanggan
-        debt.customerName = newName;
-        debt.customerPhone = newPhone;
-        debt.amount = parseFloat(newDebtAmount);
-
-        // Simpan perubahan ke localStorage
-        localStorage.setItem('debts', JSON.stringify(debts));
-
-        // Menampilkan kembali daftar hutang
-        displayDebts();
-    } else {
-        alert("Input tidak valid. Pastikan semua data diisi dengan benar.");
-    }
-}
-
-
-// Fungsi untuk toggle form pembayaran
-function togglePaymentForm(index) {
-    const paymentForm = document.getElementById(`paymentForm${index}`);
-    if (paymentForm.style.display === "none" || paymentForm.style.display === "") {
-        paymentForm.style.display = "block";
-    } else {
-        paymentForm.style.display = "none";
-    }
-}
-// Fungsi untuk konfirmasi pembayaran
-function confirmPayment(index) {
-    const paymentAmount = parseFloat(document.getElementById(`paymentAmount${index}`).value);
-    const debt = debts[index];
-
-    // Mengecek apakah jumlah pembayaran lebih besar dari hutang yang tersisa
-    if (paymentAmount > debt.amount) {
-        const returnAmount = paymentAmount - debt.amount; // Menghitung kembalian
-        debt.returnAmount = returnAmount; // Menyimpan kembalian dalam data hutang
-
-        // Menyimpan riwayat pembayaran yang mencatat jumlah pembayaran yang lebih besar dari hutang
-        debt.payments.push({
-            date: new Date().toLocaleString(),
-            paid: debt.amount,  // Jumlah yang dibayar sesuai dengan hutang
-            after: 0  // Setelah pembayaran, hutang menjadi 0
-        });
-
-        // Setel jumlah hutang menjadi 0
-        debt.amount = 0;
-
-        // Menampilkan pesan kembalian
-        alert(`Pembayaran melebihi jumlah hutang. Kembalian Anda adalah: ${returnAmount}`);
-    } else if (paymentAmount <= 0) {
-        // Jika pembayaran kurang dari atau sama dengan 0, tampilkan peringatan
-        alert("Jumlah pembayaran harus lebih besar dari 0.");
-        return;
-    } else {
-        // Jika jumlah pembayaran valid dan lebih kecil atau sama dengan hutang
-        debt.amount -= paymentAmount;
-        debt.amount = debt.amount < 0 ? 0 : debt.amount; // Pastikan hutang tidak negatif
-
-        // Menyimpan riwayat pembayaran biasa
-        debt.payments.push({
-            date: new Date().toLocaleString(),
-            paid: paymentAmount,  // Jumlah yang dibayar
-            after: debt.amount  // Jumlah hutang setelah pembayaran
-        });
-    }
-
-    // Menyimpan data hutang yang diperbarui ke localStorage
-    localStorage.setItem('debts', JSON.stringify(debts));
-
-    // Update tampilan
-    displayDebts();
-
-    // Cek apakah ada pencarian yang sedang aktif (input pencarian tidak kosong)
-    let searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
-    if (searchQuery) {
-        // Jika ada pencarian, pastikan untuk memanggil kembali fungsi pencarian
-        searchDebts();
-    } else {
-        // Jika tidak ada pencarian, scroll halaman ke posisi terakhir dilihat
-        const lastSeenElement = document.querySelector('.last-seen');
-        if (lastSeenElement) {
-            lastSeenElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }
-}
-
-function deletePayment(index, paymentIndex) {
-    const debt = debts[index];
-    
-    // Menghapus riwayat pembayaran berdasarkan paymentIndex
-    debt.payments.splice(paymentIndex, 1);
-
-    // Menyimpan data hutang yang telah diperbarui
-    localStorage.setItem('debts', JSON.stringify(debts));
-
-    // Update tampilan setelah penghapusan pembayaran
-    displayDebts();
-}
-
-
-// Fungsi untuk toggle form tambahan hutang
-function toggleDebtForm(index) {
-    const debtForm = document.getElementById(`debtForm${index}`);
-    if (debtForm.style.display === "none" || debtForm.style.display === "") {
-        debtForm.style.display = "block"; // Menampilkan form
-    } else {
-        debtForm.style.display = "none"; // Menyembunyikan form
-    }
-}
-// Fungsi untuk konfirmasi penambahan hutang
-function confirmDebtAddition(index) {
-    const additionalDebtAmount = parseFloat(document.getElementById(`additionalDebtAmount${index}`).value);
-    const debt = debts[index];
-
-    // Validasi agar jumlah hutang yang dimasukkan valid
-    if (isNaN(additionalDebtAmount) || additionalDebtAmount <= 0) {
-        alert("Jumlah hutang tambahan harus lebih besar dari 0 dan berupa angka.");
-        return;
-    }
-
-    // Tambahkan jumlah hutang yang dimasukkan ke data hutang
-    debt.amount += additionalDebtAmount;
-
-    // Menyimpan riwayat penambahan hutang dalam array khusus
-    if (!debt.debtAdditions) {
-        debt.debtAdditions = [];  // Menambahkan array riwayat penambahan hutang jika belum ada
-    }
-    debt.debtAdditions.push({
-        date: new Date().toLocaleString(),
-        added: additionalDebtAmount,  // Jumlah hutang yang ditambahkan
-        after: debt.amount  // Jumlah hutang setelah penambahan
-    });
-
-    // Simpan data hutang yang diperbarui ke localStorage
-    localStorage.setItem('debts', JSON.stringify(debts));
-
-    // Tampilkan daftar hutang yang diperbarui
-    displayDebts();
-
-    // Kosongkan input setelah penambahan
-    document.getElementById(`additionalDebtAmount${index}`).value = '';
-
-    // Sembunyikan form setelah konfirmasi
-    toggleDebtForm(index);
-
-    // Cek apakah ada pencarian yang sedang aktif (input pencarian tidak kosong)
-    let searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
-    if (searchQuery) {
-        // Jika ada pencarian, pastikan untuk memanggil kembali fungsi pencarian
-        searchDebts();
-    } else {
-        // Jika tidak ada pencarian, scroll halaman ke posisi terakhir dilihat
-        const lastSeenElement = document.querySelector('.last-seen');
-        if (lastSeenElement) {
-            lastSeenElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }
-}
-// Fungsi untuk menghapus riwayat penambahan hutang
-function deleteDebtAddition(debtIndex, additionIndex) {
-    const debt = debts[debtIndex];
-
-    // Hapus riwayat penambahan hutang pada indeks yang diberikan
-    debt.debtAdditions.splice(additionIndex, 1);
-
-    // Simpan data hutang yang diperbarui ke localStorage
-    localStorage.setItem('debts', JSON.stringify(debts));
-
-    // Tampilkan daftar hutang yang diperbarui
-    displayDebts();
-}
-
-    
-// Fungsi untuk membackup data hutang dengan nilai lebih dari 0
-function backupData() {
-    // Filter data hutang dengan nilai lebih dari 0
-    const backupText = debts
-        .filter(debt => debt.amount > 0)  // Menyaring hutang dengan jumlah lebih dari 0
-        .map(debt => {
-            return `${debt.customerName} (${debt.customerPhone}) - Hutang: Rp ${debt.amount.toLocaleString()}\nPembayaran:\n` +
-                debt.payments.map(payment => `- Rp ${payment.paid.toLocaleString()} (${payment.date})`).join('\n') +
-                (debt.returnAmount !== undefined && debt.returnAmount > 0 ? `Kembalian: Rp ${debt.returnAmount.toLocaleString()}` : '') + 
-                '\n';
-        }).join('\n');
-
-    if (backupText) {
-        // Tampilkan hasil backup di dalam textarea
-        const backupTextarea = document.getElementById('backupTextarea');
-        backupTextarea.style.display = 'block'; // Menampilkan textarea
-        backupTextarea.textContent = backupText; // Mengisi textarea dengan data backup
-
-        // Salin data backup ke clipboard
-        navigator.clipboard.writeText(backupText).then(() => {
-            console.log('Data backup berhasil disalin ke clipboard');
-        }).catch(err => {
-            console.error('Gagal menyalin data ke clipboard: ', err);
-        });
-    } else {
-        console.log('Tidak ada data hutang dengan jumlah lebih dari 0 untuk dibackup');
-    }
-}
- 
-        // Fungsi untuk menghapus semua riwayat pembayaran
-function deleteAllPayments() {
-    debts.forEach(debt => {
-        // Hapus hanya riwayat pembayaran tanpa mengubah jumlah hutang
-        debt.payments = [];
-    });
-
-    // Simpan perubahan ke localStorage
-    localStorage.setItem('debts', JSON.stringify(debts));
-    // Tampilkan kembali daftar hutang setelah perubahan
-    displayDebts();
-}
-    
-        // Fungsi untuk tagih lewat WhatsApp
-function tagihCustomer(index) {
-    const debt = debts[index];
-    const message = `Halo *${debts[index].customerName}*,
-─────────────────
-Kami ingin mengingatkan bahwa kamu masih memiliki hutang sebesar:
-Rp *${debts[index].amount.toLocaleString()}*
-─────────────────
-Kami Tunggu pembayaran dalam waktu dekat,\n
-*BISA DIBAYARKAN BESOK, ya?*
-Salam hangat,\n
-[SAERAH CELL]`;
-
-    const whatsappUrl = `https://wa.me/${debt.customerPhone}?text=${encodeURIComponent(message)}`;
-    
-    // Mengarahkan pengguna langsung ke WhatsApp tanpa membuka tab baru
-    window.location.href = whatsappUrl;
-}
-    
-        // Menambahkan hutang baru ke dalam array debts dan menyimpannya
-       // Fungsi untuk mensanitasi input nomor telepon
-       function sanitizePhoneInput(event) {
-            let phone = event.target.value;
-
-            // Menghapus semua karakter yang bukan angka
-            phone = phone.replace(/[^0-9]/g, '');
-
-            // Jika nomor telepon dimulai dengan 0, ganti dengan 62
-            if (phone.startsWith('0')) {
-                phone = '62' + phone.substring(1);
-            }
-
-            // Set kembali nilai input dengan nomor telepon yang sudah disanitasi
-            event.target.value = phone;
-        }
-
-        // Menambahkan hutang baru ke dalam array debts dan menyimpannya ke localStorage
-        document.getElementById('debtForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const customerName = document.getElementById('customerName').value;
-            const customerPhone = document.getElementById('customerPhone').value;
-            const debtAmount = parseFloat(document.getElementById('debtAmount').value);
-
-            if (customerName && customerPhone && !isNaN(debtAmount)) {
-                const newDebt = {
-                    customerName: customerName,
-                    customerPhone: customerPhone,
-                    amount: debtAmount,
-                    originalAmount: debtAmount, // Menyimpan jumlah hutang asli
-                    payments: []
-                };
-
-                debts.push(newDebt);  // Menambahkan data hutang ke array debts
-                localStorage.setItem('debts', JSON.stringify(debts));  // Menyimpan ke localStorage
-                displayDebts();  // Menampilkan daftar hutang
-
-                // Reset form setelah menambah hutang
-                document.getElementById('debtForm').reset();
-            }
-        });
-
-        // Menampilkan daftar hutang yang ada pada saat halaman pertama kali dimuat
-        displayDebts();
-    </script>
-    
-    </body>
-    </html>
+  </script>
+</body>
+</html>
