@@ -1,436 +1,169 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar Kategori dan Produk</title>
-  <style>
-    /* Resetting some basic styles */
-    body, h1, label, select, input, button {
-      margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Transfer Bank</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
 
-    body {
-      background: linear-gradient(135deg, #3e2a47, #5a3f8d); /* Gradasi warna ungu gelap ke ungu muda */
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
 
-    .container {
-      background-color: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      max-width: 480px;
-      width: 100%;
-      padding: 30px;
-      box-sizing: border-box;
-      background: #fff;
-      border: 1px solid #f0d130; /* Warna emas untuk border */
-    }
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-    h1 {
-      text-align: center;
-      color: #5a3f8d;
-      font-size: 28px;
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
+        .form-group label {
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
 
-    label {
-      font-size: 16px;
-      color: #333;
-      margin-bottom: 8px;
-      display: block;
-    }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
 
-    select, input[type="text"], button {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-      background-color: #fafafa;
-      box-sizing: border-box;
-      transition: border-color 0.3s;
-    }
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
 
-    select:focus, input[type="text"]:focus, button:focus {
-      border-color: #5a3f8d; /* Warna ungu muda pada border saat fokus */
-      outline: none;
-    }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-    .product-list {
-      display: none;
-    }
+        .form-group button:hover {
+            background-color: #218838;
+        }
 
-    .button-container {
-      text-align: center;
-    }
+        .form-group .cancel-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
 
-    .product-list select {
-      width: 100%;
-    }
+        .form-group .cancel-btn:hover {
+            background-color: #c82333;
+        }
 
-    button {
-      background-color: #5a3f8d; /* Warna ungu muda untuk tombol */
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      border-radius: 6px;
-      padding: 15px;
-    }
-
-    button:hover {
-      background-color: #3e2a47; /* Warna ungu gelap saat hover */
-    }
-
-    /* Style untuk mobile responsiveness */
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px;
-      }
-      select, input[type="text"], button {
-        padding: 10px;
-      }
-    }
-
-    /* Style khusus untuk keterangan provider tanpa background */
-    .provider-info {
-      font-size: 16px;
-      color: red; /* Menggunakan warna merah untuk teks */
-      margin-top: 10px;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    /* Menambahkan spacing agar elemen lebih rapi dan simetris */
-    .form-group {
-      margin-bottom: 15px; /* Jarak antar elemen lebih rapi */
-    }
-
-    /* Membuat tombol beli lebih besar dan simetris */
-    .button-container button {
-      padding: 15px;
-      font-size: 18px;
-      width: 100%;
-      border-radius: 8px;
-    }
-  </style>
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>Menu Pilih Kategori dan Produk</h1>
+    <div class="container">
+        <h1>Form Transfer Bank</h1>
 
-    <!-- Kolom input untuk nomor telepon dipindahkan ke atas -->
-    <div class="form-group">
-      <label for="phone">Nomor Telepon:</label>
-      <input type="text" id="phone" placeholder="Masukkan nomor telepon Anda" oninput="checkPhoneProvider()" />
-      <div id="provider-info" class="provider-info"></div>
+        <form id="transfer-form">
+            <!-- Input Nomor -->
+            <div class="form-group">
+                <label for="nomor">Nomor Rekening:</label>
+                <input type="text" id="nomor" placeholder="Masukkan nomor rekening" required>
+            </div>
+
+            <!-- Input Nama Pemilik Bank -->
+            <div class="form-group">
+                <label for="pemilik">Nama Pemilik Rekening:</label>
+                <input type="text" id="pemilik" placeholder="Masukkan nama pemilik rekening" required>
+            </div>
+
+            <!-- Input Jenis Bank -->
+            <div class="form-group">
+                <label for="jenis-bank">Jenis Bank:</label>
+                <select id="jenis-bank" required>
+                    <option value="">-- Pilih Jenis Bank --</option>
+                    <option value="BCA">BCA</option>
+                    <option value="Mandiri">Mandiri</option>
+                    <option value="BNI">BNI</option>
+                    <option value="BRI">BRI</option>
+                    <option value="CitiBank">CitiBank</option>
+                    <option value="Other">Bank Lainnya</option>
+                </select>
+            </div>
+
+            <!-- Input Nominal Transfer -->
+            <div class="form-group">
+                <label for="nominal">Nominal Transfer:</label>
+                <input type="number" id="nominal" placeholder="Masukkan nominal transfer" required>
+            </div>
+
+            <!-- Tombol Submit -->
+            <div class="form-group">
+                <button type="submit">Proses Transfer</button>
+            </div>
+
+            <!-- Tombol Batal -->
+            <div class="form-group">
+                <button type="button" class="cancel-btn" onclick="window.close();">Batal</button>
+            </div>
+        </form>
     </div>
 
-    <!-- Dropdown untuk memilih kategori -->
-    <div class="form-group">
-      <label for="category">Pilih Kategori:</label>
-      <select id="category" onchange="updateSubCategory()">
-        <option value="">-- Pilih Kategori --</option>
-        <option value="pulsa">Pulsa</option>
-        <option value="kuota">Kuota</option>
-        <option value="perabot">Perabot Rumah</option>
-      </select>
-    </div>
+    <script>
+        // Script untuk menangani pengiriman form dan validasi
+    document.getElementById('transfer-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Mencegah pengiriman form
 
-    <!-- Dropdown untuk memilih provider pulsa -->
-    <div id="provider-container" class="product-list form-group" style="display: none;">
-      <label for="provider">Pilih Provider Pulsa:</label>
-      <select id="provider" onchange="updateProducts()">
-        <option value="">-- Pilih Provider --</option>
-        <!-- Provider akan diisi dengan JavaScript -->
-      </select>
-    </div>
+        // Ambil data dari form
+        const nomor = document.getElementById('nomor').value;
+        const pemilik = document.getElementById('pemilik').value;
+        const jenisBank = document.getElementById('jenis-bank').value;
+        const nominal = document.getElementById('nominal').value;
 
-    <!-- Dropdown untuk memilih produk berdasarkan provider pulsa -->
-    <div id="product-container" class="product-list form-group" style="display: none;">
-      <label for="product">Pilih Produk:</label>
-      <select id="product">
-        <option value="">-- Pilih Produk --</option>
-        <!-- Produk akan diisi dengan JavaScript -->
-      </select>
-    </div>
+        if (nomor && pemilik && jenisBank && nominal) {
+            // Format pesan WhatsApp
+            const message = `transfer ${nomor} ${pemilik} ${jenisBank} ${nominal}`;
 
-    <!-- Tombol untuk beli -->
-    <div class="button-container">
-      <button onclick="purchaseProduct()">Beli</button>
-    </div>
-  </div>
+            // Nomor tujuan WhatsApp
+            const phoneNumber = '6289510044680';
 
-  <script>
-    // Data produk dengan subkategori provider
-    const products = {
-      pulsa: {
-        indosat: [
-        { name: 'Indosat 5000', code: 'indosat5' },
-{ name: 'Indosat 10000', code: 'indosat10' },
-{ name: 'Indosat 15000', code: 'int15' },
-{ name: 'Indosat 20000', code: 'int20' },
-{ name: 'Indosat 25000', code: 'indosat25' },
-{ name: 'Indosat 30000', code: 'int30' },
-{ name: 'Indosat 35000', code: 'indosat35' },
-{ name: 'Indosat 40000', code: 'indosat40' },
-{ name: 'Indosat 50000', code: 'indosat50' },
-{ name: 'Indosat 60000', code: 'indosat60' },
-{ name: 'Indosat 70000', code: 'indosat70' },
-{ name: 'Indosat 80000', code: 'indosat80' },
-{ name: 'Indosat 90000', code: 'indosat90' },
-{ name: 'Indosat 100000', code: 'indosat100' }
-        ],
-        telkomsel: [
-        { name: 'Telkomsel 5000', code: 'telkomsel5' },
-{ name: 'Telkomsel 10000', code: 'telkomsel10' },
-{ name: 'Telkomsel 15000', code: 'telkomsel15' },
-{ name: 'Telkomsel 20000', code: 'telkomsel20' },
-{ name: 'Telkomsel 25000', code: 'telkomsel25' },
-{ name: 'Telkomsel 30000', code: 'telkomsel30' },
-{ name: 'Telkomsel 35000', code: 'telkomsel35' },
-{ name: 'Telkomsel 40000', code: 'telkomsel40' },
-{ name: 'Telkomsel 45000', code: 'telkomsel45' },
-{ name: 'Telkomsel 50000', code: 'telkomsel50' },
-{ name: 'Telkomsel 55000', code: 'telkomsel55' },
-{ name: 'Telkomsel 60000', code: 'telkomsel60' },
-{ name: 'Telkomsel 65000', code: 'telkomsel65' },
-{ name: 'Telkomsel 70000', code: 'telkomsel70' },
-{ name: 'Telkomsel 75000', code: 'telkomsel75' },
-{ name: 'Telkomsel 80000', code: 'telkomsel80' },
-{ name: 'Telkomsel 85000', code: 'telkomsel85' },
-{ name: 'Telkomsel 90000', code: 'telkomsel90' },
-{ name: 'Telkomsel 95000', code: 'telkomsel95' },
-{ name: 'Telkomsel 100000', code: 'telkomsel100' }
+            // URL WhatsApp
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
-        ],
-        xl: [
-        { name: 'XL 5000', code: 'xl5' },
-{ name: 'XL 10000', code: 'xl10' },
-{ name: 'XL 15000', code: 'xl15' },
-{ name: 'XL 20000', code: 'xl20' },
-{ name: 'XL 25000', code: 'xl25' },
-{ name: 'XL 30000', code: 'xl30' },
-{ name: 'XL 40000', code: 'xl40' },
-{ name: 'XL 50000', code: 'xl50' },
-{ name: 'XL 60000', code: 'xl60' },
-{ name: 'XL 70000', code: 'xl70' },
-{ name: 'XL 80000', code: 'xl80' },
-{ name: 'XL 90000', code: 'xl90' },
-{ name: 'XL 100000', code: 'xl100' }
-        ],
-        axis: [
-        { name: 'axis 5000', code: 'ax5' },
-{ name: 'axis 10000', code: 'ax10' },
-{ name: 'axis 15000', code: 'ax15' },
-{ name: 'axis 20000', code: 'ax20' },
-{ name: 'axis 25000', code: 'ax25' },
-{ name: 'axis 30000', code: 'ax30' },
-{ name: 'axis 40000', code: 'ax40' },
-{ name: 'axis 50000', code: 'ax50' },
-{ name: 'axis 60000', code: 'ax60' },
-{ name: 'axis 70000', code: 'ax70' },
-{ name: 'axis 80000', code: 'ax80' },
-{ name: 'axis 90000', code: 'ax90' },
-{ name: 'axis 100000', code: 'ax100' }
-
-        ],
-        Three: [
-        { name: 'three 5000', code: 'tri5' },
-{ name: 'three 10000', code: 'tri10' },
-{ name: 'three 15000', code: 'trit15' },
-{ name: 'three 20000', code: 'trit20' },
-{ name: 'three 25000', code: 'trit25' },
-{ name: 'three 30000', code: 'tri30' },
-{ name: 'three 40000', code: 'trit40' },
-{ name: 'three 45000', code: 'tri45' },
-{ name: 'three 50000', code: 'tri50' },
-{ name: 'three 60000', code: 'tri60' },
-{ name: 'three 70000', code: 'tri70' },
-{ name: 'three 75000', code: 'tri75' },
-{ name: 'three 80000', code: 'tri80' },
-{ name: 'three 90000', code: 'tri90' },
-{ name: 'three 100000', code: 'tri100' }
-
-        ],
-        Byu: [
-        { name: 'byu 5000', code: 'by5' },
-{ name: 'byu 10000', code: 'by10' },
-{ name: 'byu 15000', code: 'by15' },
-{ name: 'byu 20000', code: 'by20' },
-{ name: 'byu 25000', code: 'by25' },
-{ name: 'byu 30000', code: 'by30' },
-{ name: 'byu 35000', code: 'by35' },
-{ name: 'byu 40000', code: 'by40' },
-{ name: 'byu 45000', code: 'by45' },
-{ name: 'byu 50000', code: 'by50' },
-{ name: 'byu 55000', code: 'by55' },
-{ name: 'byu 60000', code: 'by60' },
-{ name: 'byu 65000', code: 'by65' },
-{ name: 'byu 70000', code: 'by70' },
-{ name: 'byu 75000', code: 'by75' },
-{ name: 'byu 80000', code: 'by80' },
-{ name: 'byu 85000', code: 'by85' },
-{ name: 'byu 90000', code: 'by90' },
-{ name: 'byu 95000', code: 'by95' },
-{ name: 'byu 100000', code: 'by100' }
-
-        ]
-      },
-      kuota: {
-        indosat: [
-          { name: '1gb 2hari', code: 'idj1' },
-          { name: '3gb 3hari', code: 'if3h3' },
-          { name: '2,5gb 5hari', code: 'idj2,5' },
-          { name: '3gb 3hari', code: 'if3h3' },
-          { name: '5gb 5hari', code: 'idj5' },
-          { name: '7gb 7hari', code: 'idj7' },
-          { name: '3gb 30hari', code: 'idfi3' },
-          { name: '7gb 30hari', code: 'idfi7' },
-          { name: '9gb 30hari', code: 'idfi9' },
-          { name: '12gb 30hari', code: 'idfi12' },
-          { name: '100gb 30hari', code: 'idfi100' }
-        ],
-        telkomsel: [
-          { name: 'paket 5000', code: 'telkomsel5' },
-          { name: 'paket 10000', code: 'telkomsel10' },
-          { name: 'Telkomsel 20000', code: 'telkomsel20' }
-        ],
-        xl: [
-          { name: 'paket 5000', code: 'xl5' },
-          { name: 'paket 10000', code: 'xl10' },
-          { name: 'paket 20000', code: 'xl20' }
-        ]
-      },
-    };
-
-    // Daftar awalan nomor provider Indonesia
-    const phoneProviders = {
-      'telkomsel': '0852,0853,0811,0812,0813,0821,0822,0823,0851',
-      'indosat': '0855,0856,0857,0858,0814,0815,0815,0816',
-      'xl axiata': '0817,0818,0819,0859,0877,0878',
-      'axis': '0831,0832,0833,0838',
-      'tri': '0895,0896,0897,0898,0899',
-      'smartfren': '0881,0882,0883,0884,0885,0886,0887,0888,0889'
-    };
-
-    // Fungsi untuk memperbarui subkategori (provider) berdasarkan kategori yang dipilih
-    function updateSubCategory() {
-      const category = document.getElementById('category').value;
-      const providerContainer = document.getElementById('provider-container');
-      const productContainer = document.getElementById('product-container');
-      const providerSelect = document.getElementById('provider');
-      
-      // Reset pilihan
-      providerSelect.innerHTML = '<option value="">-- Pilih Provider --</option>';
-      productContainer.style.display = 'none';
-      providerContainer.style.display = 'none';
-
-      if (category) {
-        if (category === 'pulsa' || category === 'kuota') {
-          const providers = Object.keys(products[category]);
-          providers.forEach(function(provider) {
-            const option = document.createElement('option');
-            option.value = provider;
-            option.textContent = provider.charAt(0).toUpperCase() + provider.slice(1);
-            providerSelect.appendChild(option);
-          });
-          providerContainer.style.display = 'block';
+            // Mengarahkan langsung ke WhatsApp tanpa membuka tab baru
+            window.location.href = url;
         } else {
-          // Tampilkan produk untuk kategori lainnya (perabot)
-          const categoryProducts = products[category];
-          categoryProducts.forEach(function(product) {
-            const option = document.createElement('option');
-            option.value = product.code;
-            option.textContent = product.name;
-            providerSelect.appendChild(option);
-          });
-          productContainer.style.display = 'block';
+            alert('Harap lengkapi semua data!');
         }
-      }
-    }
+    });
+    </script>
 
-    // Fungsi untuk memeriksa provider berdasarkan nomor telepon
-    function checkPhoneProvider() {
-      const phone = document.getElementById('phone').value;
-      const providerInfo = document.getElementById('provider-info');
-      const phonePrefix = phone.substring(0, 4); // Ambil awalan 4 digit nomor
-      let providerFound = '';
-
-      // Mencari provider berdasarkan prefix
-      for (let provider in phoneProviders) {
-        const prefixes = phoneProviders[provider].split(',');
-        if (prefixes.includes(phonePrefix)) {
-          providerFound = provider;
-          break;
-        }
-      }
-
-      if (providerFound) {
-        providerInfo.textContent = `Nomor ini terdaftar pada provider: ${providerFound.charAt(0).toUpperCase() + providerFound.slice(1)}`;
-      } else {
-        providerInfo.textContent = 'Provider tidak ditemukan atau nomor tidak valid.';
-      }
-    }
-
-    // Fungsi untuk memperbarui produk berdasarkan provider yang dipilih
-    function updateProducts() {
-      const category = document.getElementById('category').value;
-      const provider = document.getElementById('provider').value;
-      const productSelect = document.getElementById('product');
-      
-      // Reset pilihan produk
-      productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
-      
-      if (provider && category) {
-        const providerProducts = products[category][provider];
-        providerProducts.forEach(function(product) {
-          const option = document.createElement('option');
-          option.value = product.code;
-          option.textContent = product.name;
-          productSelect.appendChild(option);
-        });
-        productSelect.parentElement.style.display = 'block';
-      }
-    }
-
-    // Fungsi untuk membeli produk
-    function purchaseProduct() {
-      const productSelect = document.getElementById('product');
-      const providerSelect = document.getElementById('provider');
-      const phoneInput = document.getElementById('phone');
-      const phone = phoneInput.value;
-      const productCode = productSelect.value;
-
-      if (!productCode || !phone) {
-        alert('Silakan pilih produk dan masukkan nomor telepon.');
-        return;
-      }
-
-      const message = `buy ${productCode}.${phone}`;
-      const phoneNumber = '6289510044680';
-      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
-      window.open(url, '_blank');
-    }
-
-    function findProductByCode(code) {
-      for (let category in products) {
-        const product = products[category].find(p => p.code === code);
-        if (product) return product;
-      }
-      return null;
-    }
-  </script>
 </body>
 </html>
